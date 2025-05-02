@@ -1,0 +1,596 @@
+{
+  "profile": {
+    "profile": "Profil",
+    "my_profile": "Mon Profil",
+    "language": "Langue",
+    "dark_mode": "Mode Sombre",
+    "about_app": "À propos de l'application",
+    "logout": "Déconnexion",
+    "logout_confirmation": "Vous êtes sur le point de vous déconnecter. Êtes-vous sûr ?",
+    "keep_logged_in": "Non, rester connecté",
+    "confirm_logout": "Oui, déconnexion"
+  },
+  "myProfile": {
+    "my_profile": "Mon Profil",
+    "save": "Enregistrer",
+    "full_name": "Nom Complet",
+    "email_address": "Adresse E-mail",
+    "phone_number": "Numéro de Téléphone",
+    "role_job_title": "Rôle/Titre du Poste",
+    "id": "ID"
+  },
+  "languages": {
+    "languages": "Langues",
+    "preferred_languages": "Choisissez votre langue préférée",
+    "save": "Enregistrer"
+  },
+  "notifications": {
+    "notifications": "Notifications"
+  },
+  "DatePicker": {
+    "clear": "effacer",
+    "cancel": "annuler",
+    "ok": "OK"
+  },
+  "imgagePicker": {
+    "photo": "Photo",
+    "camera": "Caméra",
+    "delete": "Supprimer",
+    "change": "Changer"
+  },
+  "createTask": {
+    "segmentedControl": {
+      "add_tag": "Ajouter une Tag",
+      "add_fps": "Ajouter un Fps"
+    },
+    "actionButtons": {
+      "continue": "Continuer",
+      "back": "Retour",
+      "finish": "Terminer",
+      "add": "Ajouter",
+      "update": "Actualiser"
+    }
+  },
+  "addTagDetails": {
+    "sections": {
+      "1": {
+        "sectionTitle": "Informations de base",
+        "nextPageTitle": "Suivant, Emplacement et priorité"
+      },
+      "2": {
+        "sectionTitle": "Emplacement et priorité",
+        "nextPageTitle": "Suivant, Attribution et date limite"
+      },
+      "3": {
+        "sectionTitle": "Attribution et date limite",
+        "nextPageTitle": "Suivant, Soumettre"
+      }
+    },
+    "fields": {
+      "1_1": {
+        "label": "Catégorie",
+        "placeholder": "ex., Maintenance, Production, Qualité",
+        "searchPlaceholder": "Rechercher...",
+        "options": {
+          "1": "Maintenance",
+          "2": "Production",
+          "3": "Qualité",
+          "4": "Sécurité"
+        }
+      },
+      "1_2": {
+        "label": "Description",
+        "placeholder": "ex., Problème de calibration de la Machine 5"
+      },
+      "1_3": {
+        "label": "Images",
+        "placeholder": "Télécharger ou prendre une photo de l'anomalie"
+      },
+      "2_1": {
+        "label": "Zone",
+        "placeholder": "ex., A, B, C"
+      },
+      "2_2": {
+        "label": "Machine",
+        "placeholder": "ex., 5, 10"
+      },
+      "2_3": {
+        "label": "Équipement",
+        "placeholder": "ex., Tapis Roulant, Pompe"
+      },
+      "2_4": {
+        "label": "Priorité",
+        "placeholder": "ex., Normale, Urgente, T.Urgente",
+        "searchPlaceholder": "Rechercher...",
+        "options": {
+          "1": "Normale",
+          "2": "Urgente",
+          "3": "T.Urgente"
+        }
+      },
+      "3_1": {
+        "label": "Trouvé Par",
+        "placeholder": "ex., Anas Najar",
+        "searchPlaceholder": "Rechercher..."
+      },
+      "3_2": {
+        "label": "Délai",
+        "placeholder": "ex., 2023-10-30"
+      }
+    },
+    "successfully_created": "Tag Créé avec succès !",
+    "close": "fermer"
+  },
+  "addTagDetailsErrors": {
+    "tagNumber": "Veuillez saisir un numéro de tag valide (ex: #TAG-123456).",
+    "category": "Veuillez sélectionner une catégorie valide.",
+    "description": "La description doit comporter au moins 10 caractères.",
+    "images": "Veuillez télécharger au moins une image de l'anomalie.",
+    "zone": "Veuillez saisir une zone valide (ex: A).",
+    "machine": "Veuillez saisir un nom de machine valide (ex: 5).",
+    "equipment": "Veuillez saisir un équipement valide.",
+    "priority": "Veuillez saisir une priorité valide.",
+    "status": "Veuillez saisir un statut valide.",
+    "foundBy": "Veuillez saisir qui a trouvé l'anomalie.",
+    "responsiblePerson": "Veuillez sélectionner la/les personne(s) responsable(s) de la résolution de l'anomalie.",
+    "actions": "Veuillez décrire les actions à entreprendre (minimum 10 caractères).",
+    "deadline": "Veuillez sélectionner une date limite valide (doit être dans le futur)."
+  },
+  "addFpsDetails": {
+    "sections": {
+      "1": {
+        "sectionTitle": "Identification du Problème",
+        "nextPageTitle": "Suivant, Alerte et Actions Immédiates"
+      },
+      "2": {
+        "sectionTitle": "Alerte et Actions Immédiates",
+        "nextPageTitle": "Suivant, Analyse des Causes Racines"
+      },
+      "3": {
+        "sectionTitle": "Analyse des Causes Racines",
+        "nextPageTitle": "Suivant, Actions Correctives"
+      },
+      "4": {
+        "sectionTitle": "Actions Correctives",
+        "nextPageTitle": "Suivant, Validation et Clôture"
+      },
+      "5": {
+        "sectionTitle": "Validation et Clôture",
+        "nextPageTitle": "Suivant, Soumettre"
+      }
+    },
+    "fields": {
+      "1_1": {
+        "label": "Catégorie",
+        "placeholder": "ex., Maintenance, Production, Qualité",
+        "searchPlaceholder": "Rechercher...",
+        "options": {
+          "1": "Sécurité",
+          "2": "Qualité",
+          "3": "Maintenance",
+          "4": "Production",
+          "5": "Autres"
+        }
+      },
+      "1_2": {
+        "label": "Référence",
+        "placeholder": "ex., REF-98765"
+      },
+      "1_3": {
+        "label": "Nature du Problème (Quoi)",
+        "placeholder": "ex., Panne machine, produit non conforme"
+      },
+      "1_4": {
+        "label": "Date & Heure",
+        "placeholder": "ex., 2024-03-04 14:30"
+      },
+      "1_5": {
+        "label": "Lieu de Détection (Où)",
+        "placeholder": "ex., Ligne de Production 3"
+      },
+      "1_6": {
+        "label": "Détecté Par (Qui)",
+        "placeholder": "ex., John Doe",
+        "searchPlaceholder": "Rechercher..."
+      },
+      "1_7": {
+        "label": "Méthode de Détection (Comment)",
+        "placeholder": "ex., Inspection Visuelle, Alarme Machine"
+      },
+      "1_8": {
+        "label": "Quantité Défectueuse (Combien)",
+        "placeholder": "ex., 10"
+      },
+      "1_9": {
+        "label": "Cause et Impact du Problème (Pourquoi)",
+        "placeholder": "ex., Défaut critique impactant la production"
+      },
+      "1_10": {
+        "label": "Risque Client",
+        "placeholder": "Oui / Non",
+        "searchPlaceholder": "Rechercher...",
+        "options": {
+          "1": "Oui",
+          "2": "Non"
+        }
+      },
+      "1_11": {
+        "label": "Images",
+        "placeholder": "Télécharger ou prendre une photo de l'anomalie"
+      },
+      "2_0": {
+        "label": "Produit Concerné",
+        "placeholder": "ex., Composant X, Produit Y"
+      },
+      "2_1": {
+        "label": "Équipes Notifiées",
+        "placeholder": "Sélectionner les équipes notifiées",
+        "searchPlaceholder": "Rechercher...",
+        "options": {
+          "1": "Chef d'Équipe",
+          "2": "Superviseur",
+          "3": "Équipe Qualité",
+          "4": "Maintenance",
+          "5": "Logistique",
+          "6": "Manager UAP",
+          "7": "Directeur de Site",
+          "8": "Autre"
+        }
+      },
+      "2_2": {
+        "label": "Actions Immédiates Prises",
+        "placeholder": "ex., Arrêt de production, Isolement des pièces"
+      },
+      "2_3": {
+        "label": "Tri Nécessaire?",
+        "placeholder": "Oui / Non",
+        "searchPlaceholder": "Rechercher...",
+
+        "options": {
+          "1": "Oui",
+          "2": "Non"
+        }
+      },
+      "2_4": {
+        "label": "Quantité Triée",
+        "placeholder": "ex., 50 triées, 5 défectueuses"
+      },
+      "2_5": {
+        "label": "Quantité NOK",
+        "placeholder": "ex., 50 triées, 5 défectueuses"
+      },
+      "2_6": {
+        "label": "Qui a Effectué le Tri?",
+        "placeholder": "ex., John Smith",
+        "searchPlaceholder": "Rechercher..."
+      },
+      "2_7": {
+        "label": "Heure de Redémarrage",
+        "placeholder": "ex., 15:45"
+      },
+      "3_1": {
+        "label": "Catégorie de Cause Racine",
+        "placeholder": "Sélectionner la catégorie de cause",
+        "searchPlaceholder": "Rechercher...",
+
+        "options": {
+          "1": "Main d'œuvre",
+          "2": "Matériel",
+          "3": "Méthode",
+          "4": "Machine"
+        }
+      },
+      "3_2": {
+        "label": "Analyse des 5 Pourquoi",
+        "placeholder": "Lister les raisons étape par étape"
+      },
+      "3_3": {
+        "label": "Pourquoi N'a-t-elle Pas Été Détectée Plus Tôt?",
+        "placeholder": "Expliquer pourquoi"
+      },
+      "4_1": {
+        "label": "Actions Correctives Permanentes",
+        "placeholder": "ex., Améliorer le processus d'inspection"
+      },
+      "4_2": {
+        "label": "Amélioration de Standard Nécessaire?",
+        "placeholder": "Oui / Non",
+        "searchPlaceholder": "Rechercher...",
+
+        "options": {
+          "1": "Oui",
+          "2": "Non"
+        }
+      },
+      "4_3": {
+        "label": "Personne(s) Responsable(s)",
+        "placeholder": "ex., Alex Johnson",
+        "searchPlaceholder": "Rechercher..."
+      },
+      "4_4": {
+        "label": "Date Planifiée",
+        "placeholder": "ex., 2024-03-10"
+      },
+      "4_5": {
+        "label": "Date d'Achèvement Réelle",
+        "placeholder": "ex., 2024-03-12"
+      },
+      "5_1": {
+        "label": "Sensibilisation de l'Équipe",
+        "placeholder": "Matin / Soir / Nuit",
+        "searchPlaceholder": "Rechercher...",
+
+        "options": {
+          "1": "Matin",
+          "2": "Soir",
+          "3": "Nuit"
+        }
+      },
+      "5_2": {
+        "label": "Validation des Actions",
+        "placeholder": "Matin / Soir / Nuit",
+        "searchPlaceholder": "Rechercher...",
+
+        "options": {
+          "1": "Matin",
+          "2": "Soir",
+          "3": "Nuit"
+        }
+      },
+      "5_3": {
+        "label": "Commentaires du Manager",
+        "placeholder": "Commentaires supplémentaires (optionnel)"
+      },
+      "5_4": {
+        "label": "Signatures",
+        "placeholder": "Sélectionner les managers responsables",
+        "searchPlaceholder": "Rechercher...",
+
+        "options": {
+          "1": "Superviseur",
+          "2": "Manager UAP",
+          "3": "Directeur de Site"
+        }
+      },
+      "5_5": {
+        "label": "Escalade Nécessaire?",
+        "searchPlaceholder": "Rechercher...",
+
+        "placeholder": "Oui / Non",
+        "options": {
+          "1": "Oui",
+          "2": "Non"
+        }
+      }
+    },
+    "successfully_created": "Fps Créé avec succès !",
+    "close": "close"
+  },
+  "addFpsDetailsErrors": {
+    "tagNumber": "Veuillez saisir un numéro d'étiquette valide (ex: #TAG-123456).",
+    "category": "Veuillez sélectionner une catégorie valide.",
+    "description": "La description doit comporter au moins 10 caractères.",
+    "images": "Veuillez télécharger au moins une image du problème.",
+    "zone": "Veuillez saisir une zone valide (ex: Zone A).",
+    "machine": "Veuillez saisir un nom de machine valide (ex: Machine 5).",
+    "equipment": "Veuillez saisir un équipement valide.",
+    "priority": "Veuillez saisir une priorité valide.",
+    "status": "Veuillez saisir un statut valide.",
+    "foundBy": "Veuillez saisir qui a trouvé le problème.",
+    "responsiblePerson": "Veuillez sélectionner la/les personne(s) responsable(s) de la résolution du problème.",
+    "actions": "Veuillez décrire les actions à entreprendre (minimum 10 caractères).",
+    "deadline": "Veuillez sélectionner une date limite valide (doit être dans le futur).",
+    "serialNumber": "Veuillez saisir un numéro de série valide (ex: S/N-123456).",
+    "reference": "Veuillez saisir un numéro de référence valide (ex: REF-98765).",
+    "dateTime": "Veuillez saisir une date valide.",
+    "location": "Veuillez saisir un lieu de détection valide.",
+    "detectedBy": "Veuillez sélectionner qui a détecté le problème.",
+    "detectionMethod": "Veuillez préciser la méthode de détection.",
+    "defectiveQuantity": "Veuillez saisir une quantité défectueuse valide.",
+    "customerRisk": "Veuillez sélectionner une option de risque client valide.",
+    "notifiedTeams": "Veuillez sélectionner au moins une équipe notifiée.",
+    "immediateActions": "Veuillez décrire les actions immédiates prises (minimum 10 caractères).",
+    "sortingRequired": "Veuillez indiquer si un tri est nécessaire.",
+    "sortingResults": "Veuillez fournir les résultats du tri (minimum 5 caractères).",
+    "sortingBy": "Veuillez sélectionner qui a effectué le tri.",
+    "restartTime": "Veuillez saisir une heure de redémarrage valide (HH:MM).",
+    "causeCategory": "Veuillez sélectionner une catégorie de cause principale valide.",
+    "whyAnalysis": "Veuillez fournir l'analyse des 5 Pourquoi.",
+    "whyNotDetected": "Veuillez expliquer pourquoi le problème n'a pas été détecté plus tôt.",
+    "correctiveActions": "Veuillez décrire les actions correctives permanentes (minimum 10 caractères).",
+    "standardImprovement": "Veuillez indiquer si une amélioration standard est nécessaire.",
+    "correctiveResponsible": "Veuillez sélectionner la/les personne(s) responsable(s) des actions correctives.",
+    "plannedDate": "Veuillez saisir une date valide (AAAA-MM-JJ).",
+    "completionDate": "Veuillez saisir une date valide (AAAA-MM-JJ).",
+    "teamAwareness": "Veuillez sélectionner une option d'horaire valide.",
+    "validationActions": "Veuillez sélectionner une option d'horaire valide.",
+    "signatures": "Veuillez sélectionner une option de signature valide.",
+    "escalationNeeded": "Veuillez indiquer si une escalade est nécessaire."
+  },
+  "tagsReporting": {
+    "headerTitle": "Signalement d'anomalies (Étiquettes)",
+    "searchPlaceholder": "Rechercher des étiquettes...",
+    "noTags": "Aucune étiquette trouvée",
+    "filter": {
+      "title": "Filtre",
+      "close": "Fermer",
+      "category": {
+        "sectionName": "Catégorie",
+        "options": {
+          "1": "Sécurité",
+          "2": "Production",
+          "3": "Maintenance",
+          "4": "Qualité"
+        }
+      },
+      "priority": {
+        "sectionName": "Priorité",
+        "options": {
+          "1": "Normal",
+          "2": "Urgent",
+          "3": "T.Urgent"
+        }
+      },
+      "status": {
+        "sectionName": "Statut",
+        "options": {
+          "1": "Ouvert",
+          "2": "En cours",
+          "3": "Résolu"
+        }
+      },
+      "date": {
+        "sectionName": "Plage de dates",
+        "to": "À",
+        "today": "Aujourd'hui"
+      },
+      "sortBy": {
+        "sectionName": "Trier par",
+        "options": {
+          "1": "Date de téléchargement",
+          "2": "Plus ancienne date de téléchargement",
+          "3": "Étiquette importante",
+          "4": "Résolus en premier",
+          "5": "Non résolus en premier"
+        }
+      },
+      "buttons": {
+        "resetFilter": "Réinitialiser le filtre",
+        "applyFilter": "Appliquer le filtre"
+      }
+    }
+  },
+  "cardDetails": {
+    "tagDetails": "Détails de Tag",
+    "tagLabel": "Numéro de Tag",
+    "no_iamge_found": "Aucune image capturée",
+
+    "priority": {
+      "label": "Priorité",
+      "options": {
+        "normal": "Normal",
+        "urgent": "Urgent",
+        "t_urgent": "T.Urgent"
+      }
+    },
+    "category": {
+      "security": "Sécurité",
+      "quality": "Qualité",
+      "maintenance": "Maintenance",
+      "production": "Production"
+    },
+    "progressSteps": {
+      "1": "Ouvert",
+      "2": "En cours",
+      "3": "Résolu"
+    },
+    "taskDetails": {
+      "date": "Date",
+      "deadline": "Date limite",
+      "zone": "Zone",
+      "machine": "Machine",
+      "equipment": "Équipement",
+      "responsiblePerson": "Personne responsable",
+      "tagNumber": "Numéro de Tag",
+      "foundedBy": "Créé par",
+      "actions": "Actions",
+      "description": "Description",
+      "images": "Images"
+    },
+    "buttons": {
+      "viewDetails": "Voir les détails",
+      "updateDetails": "Mettre à jour les détails"
+    }
+  },
+  "login": {
+    "title": "Connexion au compte",
+    "placeholder_reference": "IND001234",
+    "placeholder_password": "Mot de passe",
+    "remember_me": "Se souvenir de moi",
+    "login_button": "Connexion",
+    "forgot_password": "Mot de passe oublié ?",
+    "forgot_password_text": "Si vous devez réinitialiser votre mot de passe, veuillez contacter votre administrateur système à [admin@example.com] ou appeler le [+123 456 7890].\n\nPour des raisons de sécurité, seul l'administrateur est autorisé à gérer les modifications de mot de passe.",
+    "email_pattern_error": "Format d'e-mail invalide. Veuillez utiliser une adresse e-mail standard (exemple: name@domain.com).",
+    "password_pattern_error": "Le mot de passe doit contenir au moins 8 caractères avec une minuscule, une majuscule, un chiffre et un caractère spécial.",
+    "connection_error": "Erreur de connexion. Veuillez vérifier votre connexion internet et réessayer."
+  },
+  "noInternet": {
+    "noInternet": "Pas de connexion Internet",
+    "noInternet_message": "Il semble que vous soyez hors ligne. Veuillez vérifier votre connexion Internet et réessayer.",
+    "retry": "Réessayer"
+  },
+  "home": {
+    "hello": "Salut,",
+    "tags_in_progress": "Tags en cours",
+    "tags_completed": "Tags terminés",
+    "1": {
+      "title": "Mes Étiquettes",
+      "subtitle": "étiquettes disponibles"
+    },
+    "2": {
+      "title": "Mes Actions",
+      "subtitle": "actions ajoutées"
+    },
+    "3": {
+      "title": "Audit",
+      "subtitle": "Audit"
+    }
+  },
+  "scanner": {
+    "back": "Retour",
+    "scan": "Scanner",
+    "qrcode": "QR Code",
+    "scan_message": "Scannez le code QR à l'intérieur du carré pour enregistrer votre arrivée et commencer votre tâche."
+  },
+  "scannerPermission": {
+    "permissionDenied": "L'accès à la caméra est requis pour scanner les codes QR",
+    "permissionInstructions": "Vous avez précédemment refusé l'accès à la caméra. Veuillez l'activer dans les paramètres de votre appareil.",
+    "openSettings": "Ouvrir les paramètres"
+  },
+  "ConfirmScan": {
+    "title": "Vous êtes enregistré avec succès !",
+    "subTitle": "Merci d'être ponctuel ! Allons-y pour travailler.",
+    "home_page": "page d'accueil"
+  },
+  "aboutApp": {
+    "about_app": "À Propos",
+    "sections_title": {
+      "1_1": "Notre application",
+      "1_2": "Caractéristiques principales",
+      "1_3": "Pourquoi nous choisir ?",
+      "1_4": "Notre mission",
+      "1_5": " Contactez-nous"
+    },
+    "description": "ARA Solutions est une plateforme intelligente conçue pour rationaliser les opérations de fabrication. Elle aide les équipes à diagnostiquer les pannes, signaler les anomalies et résoudre les problèmes rapidement. Avec des alertes en temps réel, l'analyse de données et une intégration facile avec des systèmes comme SAP, notre application améliore l'efficacité et soutient l'amélioration continue — le tout à travers une interface conviviale.",
+    "key_features": {
+      "1_1": "Identifiez et résolvez rapidement les pannes machines grâce à des outils de diagnostic avancés.",
+      "1_2": "Signalez et suivez les anomalies en temps réel pour éviter les perturbations de production.",
+      "1_3": "Gérez les QRAP (Plans d'Action à Réponse Rapide) pour une résolution rapide et efficace des problèmes.",
+      "1_4": "Accédez à des rapports détaillés et des analyses pour favoriser l'amélioration continue.",
+      "1_5": "Restez informé avec des alertes instantanées pour les problèmes critiques et les mises à jour des tâches.",
+      "1_6": "Interface intuitive pour une navigation facile et une expérience utilisateur fluide.",
+      "1_7": "Connectez-vous aux systèmes existants comme SAP et GED pour des opérations et une gestion de données rationalisées."
+    },
+    "why_choose_us": {
+      "1_1": "Développé par des leaders de l'industrie avec des décennies d'expérience en fabrication et transformation numérique.",
+      "1_2": "Solutions évolutives conçues pour répondre aux besoins des petites équipes et des grandes entreprises.",
+      "1_3": "Support client dédié pour assurer votre succès à chaque étape.",
+      "1_4": "Technologie innovante exploitant les dernières avancées en IA et IoT pour des opérations plus intelligentes."
+    },
+    "our_mission": {
+      "1_1": "Fournir des outils innovants qui aident les équipes de fabrication à améliorer la productivité et rationaliser les flux de travail.",
+      "1_2": "Améliorer la qualité des produits grâce à des solutions intelligentes basées sur les données.",
+      "1_3": "Minimiser les temps d'arrêt de production avec des aperçus prédictifs et une surveillance en temps réel.",
+      "1_4": "Transformer les défis opérationnels en opportunités de croissance durable.",
+      "1_5": "Construire des partenariats solides en alignant nos solutions sur vos objectifs uniques."
+    },
+    "contact_us": {
+      "email": "support@www.ara-co.tn",
+      "phone": "+123 456 7890",
+      "website": "http://www.ara-co.tn"
+    }
+  },
+  "actions": {
+    "title": "Mes Actions"
+  }
+}

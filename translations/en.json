@@ -1,0 +1,562 @@
+{
+  "profile": {
+    "profile": "Profile",
+    "my_profile": "My Profile",
+    "language": "Language",
+    "dark_mode": "Dark Mode",
+    "about_app": "About App",
+    "logout": "Logout",
+    "logout_confirmation": "You are about to log out. Are you sure?",
+    "keep_logged_in": "No, stay logged in",
+    "confirm_logout": "Yes, logout"
+  },
+  "myProfile": {
+    "my_profile": "My Profile",
+    "save": "Save",
+    "full_name": "Full Name",
+    "email_address": "Email Address",
+    "phone_number": "Phone Number",
+    "role_job_title": "Role/Job Title",
+    "id": "ID"
+  },
+  "languages": {
+    "languages": "Languages",
+    "preferred_languages": "Choose your preferred language",
+    "save": "Save"
+  },
+  "notifications": {
+    "notifications": "Notifications"
+  },
+  "imgagePicker": {
+    "photo": "Photo",
+    "camera": "Camera",
+    "delete": "Delete",
+    "change": "Change"
+  },
+  "DatePicker": {
+    "clear": "CLEAR",
+    "cancel": "CANCEL",
+    "ok": "OK"
+  },
+  "createTask": {
+    "segmentedControl": {
+      "add_tag": "Add Tag",
+      "add_fps": "Add FPS"
+    },
+    "actionButtons": {
+      "continue": "Continue",
+      "back": "Back",
+      "finish": "Finish"
+    }
+  },
+  "addTagDetails": {
+    "sections": {
+      "1": {
+        "sectionTitle": "Basic Information",
+        "nextPageTitle": "Next, Location and Priority"
+      },
+      "2": {
+        "sectionTitle": "Location and Priority",
+        "nextPageTitle": "Next, Assignment and Deadline"
+      },
+      "3": {
+        "sectionTitle": "Assignment and Deadline",
+        "nextPageTitle": "Next, Submit"
+      }
+    },
+    "fields": {
+      "1_1": {
+        "label": "Category",
+        "placeholder": "e.g., Maintenance, Production, Quality",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Maintenance",
+          "2": "Production",
+          "3": "Quality",
+          "4": "Security"
+        }
+      },
+      "1_2": {
+        "label": "Description",
+        "placeholder": "e.g., Machine 5 calibration issue"
+      },
+      "1_3": {
+        "label": "Images",
+        "placeholder": "Upload or take a photo of the anomaly"
+      },
+      "2_1": {
+        "label": "Zone",
+        "placeholder": "e.g., A, B, C"
+      },
+      "2_2": {
+        "label": "Machine",
+        "placeholder": "e.g., 5, 10"
+      },
+      "2_3": {
+        "label": "Equipment",
+        "placeholder": "e.g., Conveyor Belt, Pump"
+      },
+      "2_4": {
+        "label": "Priority",
+        "placeholder": "e.g., Normal, Urgent, T.Urgent",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Normal",
+          "2": "Urgent",
+          "3": "T.Urgent"
+        }
+      },
+      "3_1": {
+        "label": "Found By",
+        "placeholder": "e.g., Anas Najar",
+        "searchPlaceholder": "Search..."
+      },
+      "3_2": {
+        "label": "Deadline",
+        "placeholder": "e.g., 2023-10-30"
+      }
+    },
+    "successfully_created": "Tag Successfully Created!",
+    "close": "close"
+  },
+  "addTagDetailsErrors": {
+    "tagNumber": "Please enter a valid tag number (e.g., #TAG-123456).",
+    "category": "Please select a valid category.",
+    "description": "Description must be at least 10 characters long.",
+    "images": "Please upload at least one image of the anomaly.",
+    "zone": "Please enter a valid zone (e.g., A).",
+    "machine": "Please enter a valid machine name (e.g., 5).",
+    "equipment": "Please enter a valid equipment.",
+    "priority": "Please enter a valid priority.",
+    "status": "Please enter a valid status.",
+    "foundBy": "Please enter who found the anomaly.",
+    "responsiblePerson": "Please select the person(s) responsible for resolving the anomaly.",
+    "actions": "Please describe the actions to be taken (minimum 10 characters).",
+    "deadline": "Please select a valid deadline date (must be in the future)."
+  },
+  "addFpsDetails": {
+    "sections": {
+      "1": {
+        "sectionTitle": "Problem Identification",
+        "nextPageTitle": "Next, Alert and Immediate Actions"
+      },
+      "2": {
+        "sectionTitle": "Alert and Immediate Actions",
+        "nextPageTitle": "Next, Root Cause Analysis"
+      },
+      "3": {
+        "sectionTitle": "Root Cause Analysis",
+        "nextPageTitle": "Next, Corrective Actions"
+      },
+      "4": {
+        "sectionTitle": "Corrective Actions",
+        "nextPageTitle": "Next, Validation and Closure"
+      },
+      "5": {
+        "sectionTitle": "Validation and Closure",
+        "nextPageTitle": "Next, Submit"
+      }
+    },
+    "fields": {
+      "1_1": {
+        "label": "Serial Number",
+        "placeholder": "e.g., S/N-123456"
+      },
+      "1_2": {
+        "label": "Reference",
+        "placeholder": "e.g., REF-98765"
+      },
+      "1_3": {
+        "label": "Date & Time",
+        "placeholder": "e.g., 2024-03-04 14:30"
+      },
+      "1_4": {
+        "label": "Detection Location",
+        "placeholder": "e.g., Production Line 3"
+      },
+      "1_5": {
+        "label": "Detected By",
+        "placeholder": "e.g., John Doe",
+        "searchPlaceholder": "Search..."
+      },
+      "1_6": {
+        "label": "Detection Method",
+        "placeholder": "e.g., Visual Inspection, Machine Alarm"
+      },
+      "1_7": {
+        "label": "Defective Quantity",
+        "placeholder": "e.g., 10"
+      },
+      "1_8": {
+        "label": "Customer Risk",
+        "placeholder": "Yes / No",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Yes",
+          "2": "No"
+        }
+      },
+      "1_9": {
+        "label": "Images",
+        "placeholder": "Upload or take a photo of the anomaly"
+      },
+      "2_1": {
+        "label": "Notified Teams",
+        "placeholder": "Select notified teams",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Team Leader",
+          "2": "Supervisor",
+          "3": "Quality Team",
+          "4": "Maintenance",
+          "5": "Logistics",
+          "6": "UAP Manager",
+          "7": "Site Director",
+          "8": "Other"
+        }
+      },
+      "2_2": {
+        "label": "Immediate Actions Taken",
+        "placeholder": "e.g., Stopped production, Isolated parts"
+      },
+      "2_3": {
+        "label": "Sorting Required?",
+        "placeholder": "Yes / No",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Yes",
+          "2": "No"
+        }
+      },
+      "2_4": {
+        "label": "Sorting Results",
+        "placeholder": "e.g., 50 sorted, 5 defective"
+      },
+      "2_5": {
+        "label": "Who Handled Sorting?",
+        "placeholder": "e.g., John Smith",
+        "searchPlaceholder": "Search..."
+      },
+      "2_6": {
+        "label": "Restart Time",
+        "placeholder": "e.g., 15:45"
+      },
+      "3_1": {
+        "label": "Root Cause Category",
+        "placeholder": "Select cause category",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Workforce",
+          "2": "Material",
+          "3": "Method",
+          "4": "Machine"
+        }
+      },
+      "3_2": {
+        "label": "5 Why Analysis",
+        "placeholder": "List reasons step by step"
+      },
+      "3_3": {
+        "label": "Why Wasn't It Detected Earlier?",
+        "placeholder": "Explain why"
+      },
+      "4_1": {
+        "label": "Permanent Corrective Actions",
+        "placeholder": "e.g., Improve inspection process"
+      },
+      "4_2": {
+        "label": "Standard Improvement Needed?",
+        "placeholder": "Yes / No",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Yes",
+          "2": "No"
+        }
+      },
+      "4_3": {
+        "label": "Responsible Person(s)",
+        "placeholder": "e.g., Alex Johnson",
+        "searchPlaceholder": "Search..."
+      },
+      "4_4": {
+        "label": "Planned Date",
+        "placeholder": "e.g., 2024-03-10"
+      },
+      "4_5": {
+        "label": "Actual Completion Date",
+        "placeholder": "e.g., 2024-03-12"
+      },
+      "5_1": {
+        "label": "Team Awareness",
+        "placeholder": "Morning / Evening / Night",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Morning",
+          "2": "Evening",
+          "3": "Night"
+        }
+      },
+      "5_2": {
+        "label": "Validation of Actions",
+        "placeholder": "Morning / Evening / Night",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Morning",
+          "2": "Evening",
+          "3": "Night"
+        }
+      },
+      "5_3": {
+        "label": "Manager Comments",
+        "placeholder": "Additional feedback (optional)"
+      },
+      "5_4": {
+        "label": "Signatures",
+        "placeholder": "Select responsible managers",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Supervisor",
+          "2": "UAP Manager",
+          "3": "Site Director"
+        }
+      },
+      "5_5": {
+        "label": "Escalation Needed?",
+        "placeholder": "Yes / No",
+        "searchPlaceholder": "Search...",
+        "options": {
+          "1": "Yes",
+          "2": "No"
+        }
+      }
+    },
+    "successfully_created": "Fps Successfully Created!",
+    "close": "close"
+  },
+  "addFpsDetailsErrors": {
+    "tagNumber": "Please enter a valid tag number (e.g., #TAG-123456).",
+    "category": "Please select a valid category.",
+    "description": "Description must be at least 10 characters.",
+    "images": "Please upload at least one image of the issue.",
+    "zone": "Please enter a valid zone (e.g., Zone A).",
+    "machine": "Please enter a valid machine name (e.g., Machine 5).",
+    "equipment": "Please enter valid equipment.",
+    "priority": "Please enter a valid priority.",
+    "status": "Please enter a valid status.",
+    "foundBy": "Please enter who found the issue.",
+    "responsiblePerson": "Please select responsible person(s) for resolving the issue.",
+    "actions": "Please describe the actions to be taken (minimum 10 characters).",
+    "deadline": "Please select a valid deadline (must be in the future).",
+    "serialNumber": "Please enter a valid serial number (e.g., S/N-123456).",
+    "reference": "Please enter a valid reference number (e.g., REF-98765).",
+    "dateTime": "Please enter a valid date.",
+    "location": "Please enter a valid detection location.",
+    "detectedBy": "Please select who detected the issue.",
+    "detectionMethod": "Please specify the detection method.",
+    "defectiveQuantity": "Please enter a valid defective quantity.",
+    "customerRisk": "Please select a valid customer risk option.",
+    "notifiedTeams": "Please select at least one notified team.",
+    "immediateActions": "Please describe immediate actions taken (minimum 10 characters).",
+    "sortingRequired": "Please select if sorting is required.",
+    "sortingResults": "Please provide sorting results (minimum 5 characters).",
+    "sortingBy": "Please select who handled the sorting.",
+    "restartTime": "Please enter a valid restart time (HH:MM).",
+    "causeCategory": "Please select a valid root cause category.",
+    "whyAnalysis": "Please provide the 5 Why Analysis.",
+    "whyNotDetected": "Please explain why the issue wasn't detected earlier.",
+    "correctiveActions": "Please describe permanent corrective actions (minimum 10 characters).",
+    "standardImprovement": "Please select if standard improvement is needed.",
+    "correctiveResponsible": "Please select responsible person(s) for corrective actions.",
+    "plannedDate": "Please enter a valid date (YYYY-MM-DD).",
+    "completionDate": "Please enter a valid date (YYYY-MM-DD).",
+    "teamAwareness": "Please select a valid time option.",
+    "validationActions": "Please select a valid time option.",
+    "signatures": "Please select a valid signature option.",
+    "escalationNeeded": "Please select if escalation is needed."
+  },
+  "tagsReporting": {
+    "headerTitle": "Anomaly Reporting (Tags)",
+    "searchPlaceholder": "Search tags...",
+    "noTags": "No Tags Found",
+    "filter": {
+      "title": "Filter",
+      "close": "Close",
+      "category": {
+        "sectionName": "Category",
+        "options": {
+          "1": "Safety",
+          "2": "Production",
+          "3": "Maintenance",
+          "4": "Quality"
+        }
+      },
+      "priority": {
+        "sectionName": "Priority",
+        "options": {
+          "1": "Normal",
+          "2": "Urgent",
+          "3": "T.Urgent"
+        }
+      },
+      "status": {
+        "sectionName": "Status",
+        "options": {
+          "1": "Open",
+          "2": "In Progress",
+          "3": "Resolved"
+        }
+      },
+      "date": {
+        "sectionName": "Date Range",
+        "to": "To",
+        "today": "Today"
+      },
+      "sortBy": {
+        "sectionName": "Sort By",
+        "options": {
+          "1": "Uploaded Date",
+          "2": "Oldest Uploaded Date",
+          "3": "Important Tag",
+          "4": "Resolved First",
+          "5": "Unresolved First"
+        }
+      },
+      "buttons": {
+        "resetFilter": "Reset Filter",
+        "applyFilter": "Apply Filter"
+      }
+    }
+  },
+  "cardDetails": {
+    "tagDetails": "Tag Details",
+    "tagLabel": "Tag Number",
+    "no_iamge_found": "No image captured",
+    "priority": {
+      "label": "Priority",
+      "options": {
+        "normal": "Normal",
+        "urgent": "Urgent",
+        "t_urgent": "T.Urgent"
+      }
+    },
+    "category": {
+      "security": "Security",
+      "quality": "Quality",
+      "maintenance": "Maintenance",
+      "production": "Production"
+    },
+    "progressSteps": {
+      "1": "Open",
+      "2": "In Progress",
+      "3": "Resolved"
+    },
+    "taskDetails": {
+      "date": "Date",
+      "deadline": "Deadline",
+      "zone": "Zone",
+      "machine": "Machine",
+      "equipment": "Equipment",
+      "responsiblePerson": "Responsible Person",
+      "tagNumber": "Tag Number",
+      "foundedBy": "Founded By",
+      "actions": "Actions",
+      "description": "Description",
+      "images": "Images"
+    },
+    "buttons": {
+      "viewDetails": "View Details",
+      "updateDetails": "Update Details"
+    }
+  },
+  "login": {
+    "title": "Log in Account",
+    "placeholder_reference": "IND001234",
+    "placeholder_password": "Password",
+    "remember_me": "Remember Me",
+    "login_button": "Log in",
+    "forgot_password": "Forgot Password?",
+    "forgot_password_text": "If you need to reset your password, please contact your system administrator at [admin@example.com] or call [+123 456 7890].\n\nFor security reasons, only the administrator is authorized to manage password changes.",
+    "email_pattern_error": "Invalid email format. Please use a standard email address (example: name@domain.com).",
+    "password_pattern_error": "Password must contain at least 8 characters with one lowercase, one uppercase, one number, and one special character.",
+    "connection_error": "Connection error. Please check your internet and try again."
+  },
+  "noInternet": {
+    "noInternet": "No Internet Connection",
+    "noInternet_message": "It looks like you're offline. Please check your internet connection and try again.",
+    "retry": "Retry"
+  },
+  "home": {
+    "hello": "Hello,",
+    "tags_in_progress": "Tags in Progress",
+    "tags_completed": "Tags Completed",
+    "1": {
+      "title": "My Tags",
+      "subtitle": "tags available"
+    },
+    "2": {
+      "title": "My Actions",
+      "subtitle": "actions added"
+    },
+    "3": {
+      "title": "Audit",
+      "subtitle": "Audit"
+    }
+  },
+  "scanner": {
+    "back": "Back",
+    "scan": "Scan",
+    "qrcode": "QR Code",
+    "scan_message": "Scan the QR code inside the square to mark your arrival and start your task"
+  },
+  "scannerPermission": {
+    "permissionDenied": "Camera access is required to scan QR codes",
+    "permissionInstructions": "You previously denied camera access. Please enable it in your device settings.",
+    "openSettings": "Open Settings"
+  },
+  "ConfirmScan": {
+    "title": "Successfully Checked In!",
+    "subTitle": "Thanks for being on time! Let’s get to work.",
+    "home_page": "Home Page"
+  },
+  "aboutApp": {
+    "about_app": "About App",
+    "description": "ARA Solutions is a smart platform designed to streamline manufacturing operations. It helps teams diagnose failures, report anomalies, and resolve issues quickly. With real-time alerts, data analysis, and easy integration with systems like SAP, our app boosts efficiency and supports continuous improvement — all through a user-friendly interface.",
+    "key_features": {
+      "1_1": "Quickly identify and resolve machine failures with advanced diagnostic tools.",
+      "1_2": "Report and track anomalies in real-time to prevent production disruptions.",
+      "1_3": "Manage QRAPs (Quick Response Action Plans) for fast and effective issue resolution.",
+      "1_4": "Access detailed reports and analytics to drive continuous improvement.",
+      "1_5": "Stay informed with instant alerts for critical issues and task updates.",
+      "1_6": "Intuitive design for easy navigation and seamless user experience.",
+      "1_7": "Connect with existing systems for streamlined operations and data management."
+    },
+    "sections_title": {
+      "1_1": "Our App",
+      "1_2": "Key Features",
+      "1_3": "Why Choose Us?",
+      "1_4": "Our Mission",
+      "1_5": "Contact Us"
+    },
+    "why_choose_us": {
+      "1_1": "Developed by industry leaders with decades of experience in manufacturing and digital transformation.",
+      "1_2": "Designed to meet the needs of small teams and large enterprises alike.",
+      "1_3": "Dedicated customer support to ensure your success at every step.",
+      "1_4": "Leveraging the latest advancements in AI and IoT for smarter operations."
+    },
+    "our_mission": {
+      "1_1": "Providing innovative tools that help manufacturing teams boost productivity and streamline workflows.",
+      "1_2": "Driving improvements in product quality through smart, data-driven solutions.",
+      "1_3": "Minimizing production delays with predictive insights and real-time monitoring.",
+      "1_4": "Turning operational challenges into opportunities for sustainable business growth.",
+      "1_5": "Building strong partnerships by aligning our solutions with your unique goals."
+    },
+    "contact_us": {
+      "email": "support@www.ara-co.tn",
+      "phone": "+123 456 7890",
+      "website": "http://www.ara-co.tn"
+    }
+  },
+  "actions": {
+    "title": "My Actions"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "748397166626",
+    "project_id": "aradis-2e974",
+    "storage_bucket": "aradis-2e974.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748397166626:android:dedaf38fe713831c850a7b",
+        "android_client_info": {
+          "package_name": "com.anasnajar.aradis"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMeah5Yh-gnfcL2bQN1J8gmIyWTjF7e8w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
