@@ -25,7 +25,9 @@
     "save": "حفظ"
   },
   "notifications": {
-    "notifications": "الإشعارات"
+    "notifications": "الإشعارات",
+    "no_notifications": "لا يوجد إشعارات حتى الآن",
+    "check_back": "تحقق مرة أخرى لاحقًا للحصول على تحديثات FPS وTAG، وتنبيهات النظام، والإعلانات."
   },
   "imgagePicker": {
     "photo": "صورة",
@@ -44,7 +46,7 @@
       "add_fps": "FPS إضافة"
     },
     "actionButtons": {
-      "continue": "استمرار",
+      "continue": "إرسال",
       "back": "رجوع",
       "finish": "إنهاء"
     }
@@ -57,7 +59,7 @@
       },
       "2": {
         "sectionTitle": "الموقع والأولوية",
-        "nextPageTitle": "التالي, التعيين و موعد التسليم"
+        "nextPageTitle": "التالي, إرسال"
       },
       "3": {
         "sectionTitle": "لتعيين و موعد التسليم",

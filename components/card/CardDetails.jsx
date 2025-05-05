@@ -54,7 +54,7 @@ export default function CardDetails({
   };
 
   const getData = (data, type) => {
-    return data.find((item) => item.label === type).value;
+    return data?.find((item) => item?.label === type).value;
   };
 
   const handlePageSelected = (event) => {

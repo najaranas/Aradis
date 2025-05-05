@@ -18,7 +18,7 @@ export default function CardInfo({ cardDetails, preventData, isRTL }) {
 
   return (
     <View style={styles.container}>
-      {cardDetails.map((item, index) => {
+      {cardDetails?.map((item, index) => {
         const isPrevent = preventData?.some(
           (prevItem) => prevItem === item?.label?.toLowerCase()
         );

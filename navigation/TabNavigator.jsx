@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, StyleSheet, TouchableWithoutFeedback, Text } from "react-native";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
@@ -23,10 +23,12 @@ import Notifications from "../screens/Notifications";
 import * as NavigationBar from "expo-navigation-bar";
 import HomeStackNavigator from "./HomeStackNavigator";
 import { NOTIFICATIONS } from "../constants/data";
+import { fetchNotifications } from "../utils/api/tagApi";
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
   const { theme } = useTheme();
+  const [notificationsLength, setNotificationsLength] = useState(null);
   const getRoutename = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route);
     if (
@@ -39,6 +41,19 @@ export default function TabNavigator() {
     }
     return "flex";
   };
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const data = await fetchNotifications();
+        console.log(data.le);
+        setNotificationsLength(data?.length);
+      } catch (error) {
+        console.error("error fetching notifications data : ", error);
+      }
+    };
+    loadNotifications();
+  }, []);
 
   useEffect(() => {
     requestAnimationFrame(async () => {
@@ -134,11 +149,13 @@ export default function TabNavigator() {
                         }
                         color={focused ? theme.white : theme.darkGray}
                       />
-                      <View style={styles.notificationIconContainer}>
-                        <Text style={styles.notificationIconText}>
-                          {NOTIFICATIONS.length}
-                        </Text>
-                      </View>
+                      {notificationsLength > 0 && (
+                        <View style={styles.notificationIconContainer}>
+                          <Text style={styles.notificationIconText}>
+                            {notificationsLength}
+                          </Text>
+                        </View>
+                      )}
                     </View>
                   ) : (
                     <Ionicons

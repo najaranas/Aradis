@@ -11,13 +11,14 @@ import { useTheme } from "../contexts/ThemeProvider";
 import * as NavigationBar from "expo-navigation-bar";
 import { StatusBar } from "expo-status-bar";
 import { useAuth } from "../contexts/AuthProvider";
+import { getStoredValue } from "../utils/asyncStorage";
 
 export default function Loading() {
   const naviagation = useNavigation();
   const { theme, toggleTheme } = useTheme();
-  const { isLoginSaved, changeIsLoginSaved } = useAuth();
+  const { changeUserData } = useAuth();
 
-  const getStoredItem = async (item, defaultValue) => {
+  const getStoredItem = async (item, defaultValue = null) => {
     try {
       const value = await AsyncStorage.getItem(item);
       return value || defaultValue;
@@ -28,45 +29,42 @@ export default function Loading() {
   };
 
   useEffect(() => {
+    requestAnimationFrame(async () => {
+      await NavigationBar.setBackgroundColorAsync(COLORS.primary);
+      await NavigationBar.setButtonStyleAsync("light");
+    });
+
     const fetchThemeValue = async () => {
       const storedTheme = await getStoredItem("theme", theme);
       console.log("Stored theme:", storedTheme);
       toggleTheme(storedTheme);
     };
 
-    // const fetchLoginCheckValue = async () => {
-    //   const storedLoginCheck = await getStoredItem("isLoginSaved");
-    //   console.log("Stored login Check :", storedLoginCheck);
-    //   const timeOut = setTimeout(() => {
-    //     if (storedLoginCheck === "true") {
-    //       naviagation.reset({
-    //         index: 0,
-    //         routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
-    //       });
-    //     } else {
-    //       naviagation.reset({ index: 0, routes: [{ name: "Login" }] });
-    //     }
-    //   }, 2000);
+    const fetchisLoggedIn = async () => {
+      const storedToken = await getStoredItem("token");
+      console.log("Stored token :", storedToken);
+      const timeOut = setTimeout(async () => {
+        if (storedToken) {
+          const userData = await getStoredValue("data", {});
+          console.log(userData);
+          changeUserData(JSON.parse(userData));
+          naviagation.reset({
+            index: 0,
+            routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
+          });
+        } else {
+          naviagation.reset({ index: 0, routes: [{ name: "Login" }] });
+        }
+      }, 2000);
 
-    //   return () => clearTimeout(timeOut);
-    // };
-    // fetchLoginCheckValue();
+      return () => clearTimeout(timeOut);
+    };
+
+    fetchisLoggedIn();
 
     fetchThemeValue();
-
-    const timeOut = setTimeout(() => {
-      naviagation.reset({ index: 0, routes: [{ name: "Login" }] });
-    }, 2000);
-
-    return () => clearTimeout(timeOut);
   }, []);
 
-  useEffect(() => {
-    requestAnimationFrame(async () => {
-      await NavigationBar.setBackgroundColorAsync(COLORS.primary);
-      await NavigationBar.setButtonStyleAsync("light");
-    });
-  }, []);
   return (
     <SafeAreaView style={[styles.mainContainer, styles.flexCenter]}>
       <CheckInternet />

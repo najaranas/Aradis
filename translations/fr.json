@@ -25,7 +25,9 @@
     "save": "Enregistrer"
   },
   "notifications": {
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "no_notifications": "Aucune notification pour le moment",
+    "check_back": "Revenez plus tard pour les mises à jour FPS et TAG, les alertes système et les annonces."
   },
   "DatePicker": {
     "clear": "effacer",
@@ -46,7 +48,7 @@
     "actionButtons": {
       "continue": "Continuer",
       "back": "Retour",
-      "finish": "Terminer",
+      "finish": "Soumettre",
       "add": "Ajouter",
       "update": "Actualiser"
     }
@@ -59,7 +61,7 @@
       },
       "2": {
         "sectionTitle": "Emplacement et priorité",
-        "nextPageTitle": "Suivant, Attribution et date limite"
+        "nextPageTitle": "Suivant, Soumettre"
       },
       "3": {
         "sectionTitle": "Attribution et date limite",

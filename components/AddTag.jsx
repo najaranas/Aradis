@@ -51,8 +51,6 @@ export default function AddTag() {
   const [progress, setProgress] = useState(1 / ADDTAGDETAILS?.length);
   const [activeFormPage, setActiveFormPage] = useState(0);
 
-  const [tagId, setTagId] = useState(generateId("TAG"));
-
   const [modalVisible, setModalVisible] = useState(false);
 
   const pagerViewRef = useRef(null);
@@ -62,10 +60,7 @@ export default function AddTag() {
   const translateY = useSharedValue(SIZES.xLarge);
   const [formData, setFormData] = useState(initialTagForm);
 
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState("");
-
+  console.log(formData);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -134,7 +129,8 @@ export default function AddTag() {
         return { isValid: true };
 
       case "zone":
-        const zonePattern = /^[A-Z]$/;
+        const zonePattern = /^[A-Za-z]$/;
+
         if (isEmpty(value) || !zonePattern.test(value)) {
           return {
             isValid: false,
@@ -283,6 +279,7 @@ export default function AddTag() {
   const fetchData = async () => {
     try {
       const formDataToSend = new FormData();
+      const tagId = generateId("TAG");
 
       formDataToSend.append("zone", formData?.zone);
       formDataToSend.append("machine", formData?.machine);
@@ -328,7 +325,6 @@ export default function AddTag() {
       console.log(await res.json());
     } catch (error) {
       console.log(error);
-    } finally {
     }
   };
 
@@ -338,7 +334,6 @@ export default function AddTag() {
    */
   const resetPageViewer = () => {
     setFormData(initialTagForm);
-    setTagId(generateId("TAG"));
     pagerViewRef.current.setPage(0);
     setActiveFormPage(0);
     setProgress(1 / ADDTAGDETAILS?.length);
@@ -379,8 +374,6 @@ export default function AddTag() {
           scrollEnabled={false}
           ref={pagerViewRef}
           style={styles.pagerView}
-          // layoutDirection={"ltr"}
-          // layoutDirection={"ltr"}
           pageMargin={SIZES.medium}
           initialPage={activeFormPage}>
           {ADDTAGDETAILS?.map((pageItem, pageIndex) => (

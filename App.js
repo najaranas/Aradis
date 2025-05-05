@@ -67,11 +67,7 @@ export default function App() {
                   }}>
                   <Stack.Screen name="Loading" component={Loading} />
                   <Stack.Screen name="Login" component={Login} />
-                  <Stack.Screen
-                    name="TabNavigator"
-                    component={TabNavigator}
-                    options={{ headerBackButtonDisplayMode: "generic" }}
-                  />
+                  <Stack.Screen name="TabNavigator" component={TabNavigator} />
                   <Stack.Screen name="Scanner" component={Scanner} />
                   <Stack.Screen name="ConfirmScan" component={ConfirmScan} />
                   <Stack.Screen name="NoInternet" component={NoInternet} />

@@ -32,6 +32,7 @@ import { useTranslation } from "react-i18next";
 import * as NavigationBar from "expo-navigation-bar";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { fetchTags } from "../utils/api/tagApi";
 
 /**
  * Home Screen Component
@@ -55,10 +56,21 @@ export default function Tags({}) {
    * Applies default sorting to the initial tag list
    */
   useEffect(() => {
-    setTags(filterTags(tags, false));
-    sortHandle(tags);
+    const loadTags = async () => {
+      try {
+        const tagsData = await fetchTags();
+        console.log(tagsData);
+        // setTags(tagsData);
+        // sortHandle(tagsData);
+      } catch (error) {
+        console.error("Failed to load tags:", error);
+      }
+    };
+    loadTags();
+    // setTags(filterTags(tags, false));
+    // sortHandle(tags);
   }, []);
-
+  console.log(tags);
   /**
    * Opens the filter modal and dismisses keyboard
    * Triggered when user clicks the filter icon
@@ -398,18 +410,21 @@ export default function Tags({}) {
             )}
             contentContainerStyle={styles.tagsContentContainer}
             estimatedItemSize={200}
-            renderItem={({ item, index }) => (
-              <Card
-                cardData={item}
-                preventData={[
-                  "deadline",
-                  "actions",
-                  "images",
-                  "machine",
-                  "equipment",
-                ]}
-              />
-            )}
+            renderItem={({ item, index }) => {
+              console.log(item);
+              return (
+                <Card
+                  cardData={item}
+                  preventData={[
+                    "deadline",
+                    "actions",
+                    "images",
+                    "machine",
+                    "equipment",
+                  ]}
+                />
+              );
+            }}
           />
         ) : (
           // No data Found

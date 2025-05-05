@@ -19,6 +19,7 @@ import { HOMEDATA, TAGS } from "../constants/data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../contexts/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { fetchTags } from "../utils/api/tagApi";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -27,9 +28,23 @@ export default function Home() {
   const insets = useSafeAreaInsets();
   const isScreenFocused = useIsFocused();
   const { userData } = useAuth();
-  console.log(userData);
 
   const date = new Date();
+
+  const [tags, setTags] = useState([]);
+
+  const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = await AsyncStorage.getItem("token");
+      const response = await fetch(`${apiBaseUrl}/notifications/${token}`, {
+        headers: { Authorization: `${token}` },
+      });
+      const res = await response.json();
+      console.log(res);
+    };
+    fetchData();
+  }, []);
 
   const notifcationPressHandler = () => {
     navigation.navigate("Notifications");
@@ -39,9 +54,9 @@ export default function Home() {
     navigation.navigate("Scanner");
   };
 
-  const cardPressHandler = (tag) => {
-    if (!tag) return;
-    navigation.navigate(tag);
+  const cardPressHandler = (path) => {
+    if (!path) return;
+    navigation.navigate(path);
   };
 
   const getStoredItem = async (item, defaultValue) => {

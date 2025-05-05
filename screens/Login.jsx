@@ -29,6 +29,18 @@ import CustomToast from "../components/CustomToast";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../contexts/AuthProvider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { storeValue } from "../utils/asyncStorage";
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from "react-native-indicators";
 
 export default function Login() {
   const { theme } = useTheme();
@@ -97,14 +109,6 @@ export default function Login() {
     }
   };
 
-  const storeToken = async (value) => {
-    try {
-      await AsyncStorage.setItem("token", value);
-    } catch (error) {
-      console.error("Error Saving Token:", error);
-    }
-  };
-
   const fetchData = async () => {
     try {
       const res = await fetch(
@@ -133,7 +137,21 @@ export default function Login() {
           image: user.data.image,
         });
         // store token in local storage
-        storeToken(user.token);
+
+        storeValue("token", user.token);
+
+        storeValue(
+          "data",
+          JSON.stringify({
+            ...user.data,
+            role: user.data.role,
+            userService: user.data.userService,
+            userCategory: user.data.userCategory,
+            firstName: user.data.firstName,
+            lastName: user.data.lastName,
+            image: user.data.image,
+          })
+        );
 
         navigation.reset({
           index: 0,
@@ -287,7 +305,14 @@ export default function Login() {
         <MyButton pressHandler={() => loginPressHandler()} disabled={isLoading}>
           <View style={[styles.button, { opacity: isLoading ? 0.7 : 1 }]}>
             {isLoading ? (
-              <ActivityIndicator color={COLORS.white} />
+              <View>
+                <BarIndicator
+                  color={COLORS.lightGray}
+                  count={4}
+                  size={1.4 * SIZES.medium}
+                  animationDuration={3000}
+                />
+              </View>
             ) : (
               <Text
                 style={[

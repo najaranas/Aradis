@@ -837,7 +837,7 @@ export const ADDTAGDETAILS = [
           },
           {
             id: "4",
-            type: "Sécurité",
+            type: "security",
           },
         ],
       },
@@ -913,73 +913,73 @@ export const ADDTAGDETAILS = [
       },
     ],
   },
-  {
-    id: "3",
-    sectionTitle: "Assignment and Deadline",
-    nextPageTitle: "Submit",
-    fields: [
-      {
-        id: "3_1",
-        label: "Found By",
-        keyboardType: "default",
-        placeholder: "e.g., Anas Najar",
-        searchPlaceholder: "Search...",
-        selectType: "foundBy",
-        type: "select",
-        optionsLabelField: "name",
-        options: [
-          {
-            id: "1",
-            name: "Anasfs Najat ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-          {
-            id: "2",
-            name: "Anasqt Najatsd ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-          {
-            id: "3",
-            name: "Anadfs Najat ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-          {
-            id: "4",
-            name: "Anahs Najat ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-          {
-            id: "5",
-            name: "Anazs Najat ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-          {
-            id: "6",
-            name: "Anafdds Najat ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-          {
-            id: "7",
-            name: "Anass Najat ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-          {
-            id: "8",
-            name: "Anasa Najat ",
-            img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
-          },
-        ],
-      },
-      {
-        id: "3_2",
-        label: "Deadline",
-        keyboardType: "default",
-        placeholder: "e.g., 2023-10-30",
-        selectType: "deadline",
-        type: "date",
-      },
-    ],
-  },
+  // {
+  //   id: "3",
+  //   sectionTitle: "Assignment and Deadline",
+  //   nextPageTitle: "Submit",
+  //   fields: [
+  //     {
+  //       id: "3_1",
+  //       label: "Found By",
+  //       keyboardType: "default",
+  //       placeholder: "e.g., Anas Najar",
+  //       searchPlaceholder: "Search...",
+  //       selectType: "foundBy",
+  //       type: "select",
+  //       optionsLabelField: "name",
+  //       options: [
+  //         {
+  //           id: "1",
+  //           name: "Anasfs Najat ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //         {
+  //           id: "2",
+  //           name: "Anasqt Najatsd ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //         {
+  //           id: "3",
+  //           name: "Anadfs Najat ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //         {
+  //           id: "4",
+  //           name: "Anahs Najat ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //         {
+  //           id: "5",
+  //           name: "Anazs Najat ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //         {
+  //           id: "6",
+  //           name: "Anafdds Najat ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //         {
+  //           id: "7",
+  //           name: "Anass Najat ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //         {
+  //           id: "8",
+  //           name: "Anasa Najat ",
+  //           img: "https://th.bing.com/th/id/R.9edcc6a214dfbd4e899f9d175f114706?rik=1XqL2HLJK%2bvo9Q&pid=ImgRaw&r=0",
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       id: "3_2",
+  //       label: "Deadline",
+  //       keyboardType: "default",
+  //       placeholder: "e.g., 2023-10-30",
+  //       selectType: "deadline",
+  //       type: "date",
+  //     },
+  //   ],
+  // },
 ];
 
 export const ADDFPSDETAILS = [

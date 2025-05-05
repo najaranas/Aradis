@@ -1,5 +1,12 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  I18nManager,
+} from "react-native";
 import { Dropdown, MultiSelect } from "react-native-element-dropdown";
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
@@ -35,12 +42,23 @@ export default function SelectorDropdown({
 }) {
   const { theme } = useTheme();
   const { t, i18n } = useTranslation();
-  const [tempData, setTempData] = useState(data);
+  const [tempData, setTempData] = useState(
+    data.map((item) => {
+      return {
+        [valueField]: item.id,
+        [labelField]: t(
+          `${translationType}.fields.${itemID}.options.${item.id}`
+        ),
+      };
+    })
+  );
   const [isNoSearchDataFound, setIsNoSearchDataFound] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
   const [tempSelection, setTempSelection] = useState(multiple ? [] : null);
   const dropdownRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const isRtl = I18nManager.isRTL || i18n.language === "ar";
+  console.log(isRtl);
   useEffect(() => {
     if (!tempSelection || tempSelection?.length === 0) return;
 
@@ -63,8 +81,8 @@ export default function SelectorDropdown({
       setSelectedData(fullData, "user", selectType);
       return;
     }
-
-    setSelectedData(tempSelection, "user", selectType);
+    const formatedData = data.find((u) => u?.id === tempSelection?.id);
+    setSelectedData(formatedData, "user", selectType);
   }, [tempSelection]);
 
   /**
@@ -116,9 +134,7 @@ export default function SelectorDropdown({
                       : COLORS.white + "90",
                 },
               ]}>
-              {item.img
-                ? item?.name
-                : t(`${translationType}.fields.${itemID}.options.${item.id}`)}
+              {item.img ? item?.name : item.type}
             </Text>
           </View>
 
@@ -358,38 +374,50 @@ export default function SelectorDropdown({
           }}
           renderItem={renderItem}
           renderLeftIcon={() =>
-            tempSelection?.img && (
-              <View
-                style={{
-                  borderColor: COLORS.primary,
-                  borderWidth: 2,
-                  borderRadius: 50,
-                  padding: 1,
-                  marginRight: 4,
-                }}>
-                <Image
-                  source={{ uri: tempSelection.img }}
-                  style={[styles.smallAvatar]}
-                />
-              </View>
-            )
-          }
-          renderRightIcon={() =>
-            tempSelection?.img ? (
-              <MaterialIcons
-                name="close"
-                onPress={() => {
-                  setTempSelection(null);
-                }}
-                size={1.4 * SIZES.medium}
-                color={COLORS.gray}
-              />
-            ) : (
+            isRtl ? (
               <MaterialIcons
                 name={isFocus ? "keyboard-arrow-up" : "keyboard-arrow-down"}
                 size={1.4 * SIZES.medium}
                 color={COLORS.gray}
               />
+            ) : (
+              tempSelection?.img && (
+                <View
+                  style={{
+                    borderColor: COLORS.primary,
+                    borderWidth: 2,
+                    borderRadius: 50,
+                    padding: 1,
+                    marginRight: 4,
+                  }}>
+                  <Image
+                    source={{ uri: tempSelection.img }}
+                    style={[styles.smallAvatar]}
+                  />
+                </View>
+              )
+            )
+          }
+          renderRightIcon={() =>
+            !isRtl ? (
+              tempSelection?.img ? (
+                <MaterialIcons
+                  name="close"
+                  onPress={() => {
+                    setTempSelection(null);
+                  }}
+                  size={1.4 * SIZES.medium}
+                  color={COLORS.gray}
+                />
+              ) : (
+                <MaterialIcons
+                  name={isFocus ? "keyboard-arrow-up" : "keyboard-arrow-down"}
+                  size={1.4 * SIZES.medium}
+                  color={COLORS.gray}
+                />
+              )
+            ) : (
+              <></>
             )
           }
         />

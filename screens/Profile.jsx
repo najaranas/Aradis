@@ -23,8 +23,10 @@ import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "../contexts/AuthProvider";
+import { useNavigation } from "@react-navigation/native";
+import { removeStoredValue } from "../utils/asyncStorage";
 
-export default function Profile({ navigation }) {
+export default function Profile() {
   const { theme, toggleTheme } = useTheme();
   const [popupVisible, setPopupVisible] = useState(false);
   const [isSwitchEnabled, setIsSwitchEnabled] = useState(
@@ -33,7 +35,8 @@ export default function Profile({ navigation }) {
   const { t, i18n } = useTranslation();
   const isRTL = I18nManager.isRTL || i18n.language === "ar";
   const insets = useSafeAreaInsets();
-  const { userData } = useAuth();
+  const navigation = useNavigation();
+  const { userData, changeUserData } = useAuth();
 
   useEffect(() => {
     if (isSwitchEnabled) {
@@ -50,6 +53,22 @@ export default function Profile({ navigation }) {
 
   const logoutHandler = () => {
     setPopupVisible(true);
+  };
+  const confirmLogoutHandler = () => {
+    try {
+      AsyncStorage.removeItem("token");
+      removeStoredValue("data");
+      changeUserData({});
+    } catch (error) {
+      console.log("Error in deleting token", error);
+    }
+
+    setPopupVisible(false);
+
+    navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+  };
+  const cancelLogoutHandler = () => {
+    setPopupVisible(false);
   };
 
   const navigateHandler = (route) => {
@@ -239,7 +258,7 @@ export default function Profile({ navigation }) {
                 {t("profile.logout_confirmation")}
               </Text>
               <View style={styles.popupButtonContainer}>
-                <MyButton pressHandler={() => setPopupVisible(false)}>
+                <MyButton pressHandler={() => cancelLogoutHandler()}>
                   <Text
                     style={[
                       styles.popupButton,
@@ -251,7 +270,7 @@ export default function Profile({ navigation }) {
                     {t("profile.keep_logged_in")}
                   </Text>
                 </MyButton>
-                <MyButton pressHandler={() => setPopupVisible(false)}>
+                <MyButton pressHandler={() => confirmLogoutHandler()}>
                   <Text
                     style={[
                       styles.popupButton,

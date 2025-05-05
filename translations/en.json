@@ -25,7 +25,9 @@
     "save": "Save"
   },
   "notifications": {
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "no_notifications": "  No Notifications Yet",
+    "check_back": "  Check back later for FPS and TAG updates, system alerts, and announcements."
   },
   "imgagePicker": {
     "photo": "Photo",
@@ -46,7 +48,7 @@
     "actionButtons": {
       "continue": "Continue",
       "back": "Back",
-      "finish": "Finish"
+      "finish": "Submit"
     }
   },
   "addTagDetails": {
@@ -57,7 +59,7 @@
       },
       "2": {
         "sectionTitle": "Location and Priority",
-        "nextPageTitle": "Next, Assignment and Deadline"
+        "nextPageTitle": "Next, Submit"
       },
       "3": {
         "sectionTitle": "Assignment and Deadline",

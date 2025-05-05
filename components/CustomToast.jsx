@@ -91,7 +91,11 @@ export default function CustomToast({
         toastAnimationStyle,
       ]}>
       <View style={[styles.contentContainer]}>
-        <View style={[styles.contentContainer, { flex: 1 }]}>
+        <View
+          style={[
+            styles.contentContainer,
+            { flex: 1, justifyContent: "flex-start" },
+          ]}>
           <MaterialCommunityIcons
             name={notificationType.icon}
             style={

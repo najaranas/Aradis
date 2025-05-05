@@ -1,5 +1,5 @@
 import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TopTabPage from "../components/TopTabPage";
 import { useNavigation } from "@react-navigation/native";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
@@ -9,16 +9,43 @@ import { Image } from "react-native";
 import { silentNotification } from "../constants/dataImage";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { fetchNotifications } from "../utils/api/tagApi";
+import {
+  BallIndicator,
+  BarIndicator,
+  DotIndicator,
+  MaterialIndicator,
+  PacmanIndicator,
+  PulseIndicator,
+  SkypeIndicator,
+  UIActivityIndicator,
+  WaveIndicator,
+} from "react-native-indicators";
 
 export default function Notifications() {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const BackHandler = () => {
     navigation.goBack();
   };
+
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const data = await fetchNotifications();
+        setIsLoading(false);
+        setData(data);
+      } catch (error) {
+        console.error("error fetching notifications data : ", error);
+      }
+    };
+    loadNotifications();
+  }, []);
 
   const renderItem = ({ item }) => (
     <View style={styles.notificationsCard}>
@@ -45,11 +72,15 @@ export default function Notifications() {
         text={t("notifications.notifications")}
         BackHandler={BackHandler}
       />
-      {NOTIFICATIONS?.length > 0 ? (
+      {isLoading ? (
+        <View style={styles.indicatorContainer}>
+          <DotIndicator color={COLORS.gray} count={3} size={SIZES.medium} />
+        </View>
+      ) : data?.length > 0 ? (
         <FlatList
-          data={NOTIFICATIONS}
+          data={data}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => index.toString()}
           estimatedItemSize={100}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -58,11 +89,10 @@ export default function Notifications() {
         <View style={styles.noDataContainer}>
           <Image source={silentNotification} style={styles.silentImg} />
           <Text style={[styles.noNotificationsTitle, { color: theme.text }]}>
-            No Notifications Yet
+            {t("notifications.no_notifications")}
           </Text>
           <Text style={styles.noNotificationsText}>
-            Check back later for FPS and TAG updates, system alerts, and
-            announcements.
+            {t("notifications.check_back")}
           </Text>
         </View>
       )}
@@ -128,9 +158,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: SIZES.small,
   },
+  indicatorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
   noNotificationsTitle: {
     fontSize: SIZES.large,
     fontFamily: FONTS.medium,
+    textAlign: "center",
   },
   noNotificationsText: {
     fontSize: SIZES.medium,

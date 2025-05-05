@@ -3,11 +3,10 @@ import {
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
   FlatList,
   I18nManager,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import TopTabPage from "../../components/TopTabPage";
 import { COLORS, FONTS, SIZES } from "../../constants/theme";
 import { LANGUAGES } from "../../constants/data";
@@ -17,6 +16,7 @@ import { useTranslation } from "react-i18next";
 import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { PulseIndicator } from "react-native-indicators";
 
 export default function Languages({ navigation }) {
   const { t, i18n } = useTranslation();
@@ -144,22 +144,10 @@ export default function Languages({ navigation }) {
                 </Text>
                 {isSelected && (
                   <View style={{ flex: 1, alignItems: "flex-end" }}>
-                    <View
-                      style={[
-                        styles.pickedCircle,
-                        { borderColor: theme.primary },
-                      ]}>
-                      <View
-                        style={[
-                          styles.pickedCircleIn,
-                          {
-                            backgroundColor: theme.primary,
-                            // boxShadow: `0 0 6 2 ${theme.primary}`,
-                            shadowColor: theme.primary,
-                          },
-                        ]}
-                      />
-                    </View>
+                    <PulseIndicator
+                      color={COLORS.primary}
+                      size={1.3 * SIZES.large}
+                    />
                   </View>
                 )}
               </View>
