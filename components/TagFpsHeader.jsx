@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { FONTS, SIZES } from "../constants/theme";
 import { Ionicons } from "@expo/vector-icons";
 export default function TagFpsHeader({ text, isRTL, children }) {

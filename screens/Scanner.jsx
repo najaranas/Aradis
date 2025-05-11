@@ -1,3 +1,14 @@
+//
+// Scanner.jsx
+// This component is responsible for rendering the QR code scanner screen.
+// It uses the expo-camera library to access the device's camera and scan QR codes.
+// It handles camera permissions, flash functionality, and scanning logic.
+// It also includes a custom button component for handling button presses.
+// It uses React Navigation for navigation, and Expo's NavigationBar API for setting the navigation bar color.
+// It uses the useTranslation hook for internationalization and the useTheme hook for theming.
+// It also includes a custom toast component for displaying error messages.
+//
+
 import {
   SafeAreaView,
   Linking,
@@ -7,7 +18,7 @@ import {
   I18nManager,
   AppState,
 } from "react-native";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import * as tabNavigation from "expo-navigation-bar";
 import { StatusBar } from "expo-status-bar";
 import { CameraView, useCameraPermissions } from "expo-camera";
@@ -16,9 +27,11 @@ import MyButton from "../components/MyButton";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import QRCodeOverlay from "../components/QRCodeOverlay";
 import { useTranslation } from "react-i18next";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useNavigation } from "@react-navigation/native";
+import { useTheme } from "../hooks/useTheme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomToast from "../components/CustomToast";
 
 export default function Scanner() {
   const [permissions, requestPermissions] = useCameraPermissions();
@@ -29,8 +42,13 @@ export default function Scanner() {
   const insets = useSafeAreaInsets();
   const isRTL = I18nManager.isRTL || i18n.language === "ar";
   const [appState, setAppState] = useState(AppState.currentState);
-
+  const [isScanned, setIsScanned] = useState(false);
   const [hasPermission, setHasPermission] = useState(null);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "",
+  });
 
   useEffect(() => {
     const getPermissions = async () => {
@@ -75,13 +93,106 @@ export default function Scanner() {
     navigation.goBack();
   };
 
-  const scanHandler = () => {
-    navigation.navigate("ConfirmScan");
-  };
+  const scanHandler = (data) => {
+    setTimeout(() => {
+      setIsScanned(false);
+      console.log("reseted");
+    }, 3000);
 
+    // Step 1: Validate QR code format
+    if (!data.startsWith("TAG-") && !data.startsWith("FPS-")) {
+      setToast({
+        show: true,
+        message: "Invalid QR Code, This QR code is not recognized.",
+        type: "error",
+      });
+
+      return;
+    }
+
+    const type = data.split("-")[0];
+
+    const fetchScan = async () => {
+      const token = await AsyncStorage.getItem("token");
+
+      if (!token) {
+        setToast({
+          show: true,
+          message: "User token not found. Please log in again.",
+          type: "error",
+        });
+
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${
+            process.env.EXPO_PUBLIC_API_BASE_URL
+          }/${type.toLowerCase()}/${data}/scan`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `${token}`,
+            },
+          }
+        );
+
+        const result = await response.json();
+
+        // Step 2: Handle known backend responses
+        if (!response.ok) {
+          if (result?.message) {
+            if (result.message.includes("not assigned")) {
+              setToast({
+                show: true,
+                message: "You are not assigned to This Tag or have no access",
+                type: "error",
+              });
+            } else {
+              setToast({
+                show: true,
+                message: result.message,
+                type: "error",
+              });
+            }
+          } else {
+            setToast({
+              show: true,
+              message: "Unexpected server response.",
+              type: "error",
+            });
+          }
+        } else {
+          // Step 3: Success case
+          navigation.navigate("ConfirmScan");
+        }
+      } catch (error) {
+        console.error(error);
+        setToast({
+          show: true,
+          message: "Network Error, Unable to connect to the server.",
+          type: "error",
+        });
+      }
+    };
+
+    fetchScan();
+  };
   return (
     <SafeAreaView style={[styles.container]}>
       <StatusBar hidden />
+
+      {/* error toast */}
+      <CustomToast
+        type={toast.type}
+        duration={3000}
+        isActive={toast.show}
+        message={toast.message}
+        setToast={setToast}
+        toastTopPosition={insets.top + SIZES.medium}
+      />
 
       {/* Camera View */}
 
@@ -157,9 +268,15 @@ export default function Scanner() {
             facing="back"
             onMountError={(error) => console.log("Camera error:", error)}
             onBarcodeScanned={({ data }) => {
-              if (appState === "active") {
-                scanHandler();
+              setIsScanned(true);
+              if (isScanned === false) {
+                // setTimeout(() => {
+                scanHandler(data);
+                console.log(data);
+                // }, 400);
               }
+              // if (appState === "active") {
+              // }
             }}
           />
 

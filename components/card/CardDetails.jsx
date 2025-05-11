@@ -8,7 +8,7 @@ import {
   View,
   Text,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import TopTabPage from "../TopTabPage";
 import { COLORS, FONTS, SIZES } from "../../constants/theme";
 import CardHeader from "./CardHeader";
@@ -17,7 +17,7 @@ import CardInfo from "./CardInfo";
 import { MenuProvider } from "react-native-popup-menu";
 import { Feather } from "@expo/vector-icons";
 import MyButton from "../MyButton";
-import { useTheme } from "../../contexts/ThemeProvider";
+import { useTheme } from "../../hooks/useTheme";
 import { t } from "i18next";
 import { TabSelector } from "./TabSelector";
 import PagerView from "react-native-pager-view";
@@ -29,10 +29,17 @@ const tabs = [
   { id: 3, label: "images" },
 ];
 
+// Fixed item dimensions for FlatList
+const ITEM_WIDTH = 4 * SIZES.xLarge;
+const ITEM_HEIGHT = 3 * SIZES.xLarge;
+const ITEM_SPACING = SIZES.small;
+
 export default function CardDetails({
   cardData,
   categoryColor,
   setModalVisible,
+  progressSteps,
+  cardDetails,
   isRTL,
 }) {
   const { theme } = useTheme();
@@ -42,7 +49,14 @@ export default function CardDetails({
   const [activeTab, setActiveTab] = useState(1);
   const [activePage, setActivePage] = useState(0);
   const pagerViewRef = useRef(null);
+  const flatListRef = useRef(null);
   const insets = useSafeAreaInsets();
+
+  // Ensure images data is properly formatted
+  const imageData = React.useMemo(() => {
+    if (!cardData?.images) return [];
+    return Array.isArray(cardData.images) ? cardData.images : [cardData.images];
+  }, [cardData?.images]);
 
   const hideModal = () => {
     setModalVisible(false);
@@ -54,7 +68,7 @@ export default function CardDetails({
   };
 
   const getData = (data, type) => {
-    return data?.find((item) => item?.label === type).value;
+    return data?.find((item) => item?.label === type)?.value;
   };
 
   const handlePageSelected = (event) => {
@@ -62,6 +76,19 @@ export default function CardDetails({
     setActivePage(index);
     setActiveTab(index + 1);
   };
+
+  // Pre-calculate image dimensions when component mounts
+  useEffect(() => {
+    if (imageData.length > 0) {
+      imageData.forEach((image) => {
+        if (image) {
+          Image.prefetch(image).catch((err) =>
+            console.log("Image prefetch error:", err)
+          );
+        }
+      });
+    }
+  }, [imageData]);
 
   return (
     <MenuProvider
@@ -78,120 +105,162 @@ export default function CardDetails({
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={{ flex: 1 }}
-          nestedScrollEnabled={true}
-          contentContainerStyle={[
-            {
-              gap: SIZES.large,
-            },
-          ]}>
-          <CardHeader
-            TagNumber={cardData.tagNumber}
-            category={t(`cardDetails.category.${cardData.category}`)}
-            priority={cardData.priority}
-            categoryColor={categoryColor}
-            isRTL={isRTL}
-          />
-          <CustomProgressSteps DATA={cardData.progressSteps} />
-          <CardInfo
-            cardDetails={cardData.taskDetails}
-            preventData={["images", "actions", "description"]}
-            isRTL={isRTL}
-          />
-          {/* TabSelector */}
-
-          <View style={{ gap: SIZES.medium }}>
-            <TabSelector
-              tabs={tabs}
-              activeTab={activeTab}
-              onTabChange={onTabChange}
+          nestedScrollEnabled={true}>
+          <View style={{ gap: SIZES.large }}>
+            <CardHeader
+              TagNumber={cardData?.tagId}
+              category={t(
+                `cardDetails.category.${cardData?.category?.toLowerCase()}`
+              )}
+              priority={cardData?.priority?.toLowerCase()}
+              categoryColor={categoryColor}
               isRTL={isRTL}
             />
+
+            <CustomProgressSteps DATA={progressSteps} />
+
+            <CardInfo
+              cardDetails={cardDetails}
+              preventData={["images", "actions", "description"]}
+              isRTL={isRTL}
+            />
+
+            <View style={{ gap: SIZES.medium }}>
+              <TabSelector
+                tabs={tabs}
+                activeTab={activeTab}
+                onTabChange={onTabChange}
+                isRTL={isRTL}
+              />
+            </View>
           </View>
 
+          {/* TabSelector Data */}
           <PagerView
             ref={pagerViewRef}
             pageMargin={SIZES.medium}
-            style={{ minHeight: 3 * SIZES.xLarge }}
+            style={{
+              height: 3 * SIZES.xLarge + 2 * SIZES.large,
+            }}
             initialPage={activePage}
             onPageSelected={handlePageSelected}>
-            <View key="1">
-              <ScrollView
-                nestedScrollEnabled={true}
-                contentContainerStyle={{ paddingInlineEnd: SIZES.small }}>
+            <View key="1" style={{ paddingTop: SIZES.large }}>
+              <ScrollView nestedScrollEnabled={true}>
                 <Text style={{ color: theme.text }}>
-                  {getData(cardData.taskDetails, "description")}
+                  {cardData?.description}
                 </Text>
               </ScrollView>
             </View>
 
-            <View key="2">
-              <ScrollView
-                nestedScrollEnabled={true}
-                contentContainerStyle={{ paddingInlineEnd: SIZES.small }}>
+            <View key="2" style={{ paddingTop: SIZES.large }}>
+              <ScrollView nestedScrollEnabled={true}>
                 <Text style={{ color: theme.text }}>
-                  {getData(cardData.taskDetails, "actions")}
+                  {/* Content for actions tab */}
                 </Text>
               </ScrollView>
             </View>
 
-            <View key="3">
+            <View key="3" style={{ paddingTop: SIZES.large }}>
               <FlatList
-                data={cardData?.images?.value}
+                ref={flatListRef}
+                data={imageData}
                 horizontal
-                style={{ marginLeft: SIZES.medium }}
-                keyExtractor={(item, index) => index}
+                keyExtractor={(item, index) => `image-${index}`}
                 showsHorizontalScrollIndicator={false}
-                estimatedItemSize={200}
+                initialNumToRender={3}
+                maxToRenderPerBatch={5}
+                windowSize={5}
+                getItemLayout={(data, index) => ({
+                  length: ITEM_WIDTH,
+                  offset: (ITEM_WIDTH + ITEM_SPACING) * index,
+                  index,
+                })}
                 ListEmptyComponent={() => (
-                  <Text style={styles.label}>
-                    {t("cardDetails.no_iamge_found")}{" "}
+                  <Text
+                    style={{
+                      color: COLORS.gray,
+                      fontFamily: FONTS.regular,
+                      fontSize: SIZES.medium,
+                      paddingVerticalEnd: SIZES.medium,
+                    }}>
+                    {t("cardDetails.no_iamge_found")}
                   </Text>
                 )}
-                contentContainerStyle={styles.imgsContainer}
-                renderItem={({ item }) => (
-                  <MyButton
-                    pressHandler={() => {
-                      setPopupImgUri(item.uri);
+                contentContainerStyle={{
+                  gap: SIZES.small,
+                }}
+                renderItem={({ item: image }) => {
+                  if (!image) return null;
 
-                      Image.getSize(item.uri, (width, height) => {
-                        const aspectRatio = height / width;
-                        setImgHeight(350 * aspectRatio);
+                  return (
+                    <MyButton
+                      pressHandler={() => {
+                        setPopupImgUri(image);
 
-                        requestAnimationFrame(() => {
-                          setPopupVisible(true);
-                        });
-                      });
-                    }}>
-                    <View style={{ overflow: "hidden", borderRadius: 10 }}>
-                      <Image
-                        source={{ uri: item.uri }}
-                        style={{
-                          width: 4 * SIZES.xLarge,
-                          height: 3 * SIZES.xLarge,
-                          borderRadius: 10,
-                          transform: [{ scale: 1.5 }],
-                        }}
-                        resizeMode="cover"
-                      />
-                    </View>
-                    <View style={styles.imgOverlay}>
+                        // Pre-calculate image height before showing modal
+                        Image.getSize(
+                          image,
+                          (width, height) => {
+                            const aspectRatio = height / width;
+                            const calculatedHeight = 350 * aspectRatio;
+
+                            setImgHeight(calculatedHeight);
+                            // Use requestAnimationFrame to ensure UI updates before showing modal
+                            requestAnimationFrame(() => {
+                              setPopupVisible(true);
+                            });
+                          },
+                          (error) => {
+                            console.log("Error getting image size:", error);
+                            // Show modal anyway with a default height
+                            setImgHeight(350);
+                            setPopupVisible(true);
+                          }
+                        );
+                      }}>
+                      <View style={{ overflow: "hidden", borderRadius: 10 }}>
+                        <Image
+                          source={{ uri: image }}
+                          style={{
+                            width: ITEM_WIDTH,
+                            height: ITEM_HEIGHT,
+                            borderRadius: 10,
+                            transform: [{ scale: 1.5 }],
+                          }}
+                          resizeMode="cover"
+                        />
+                      </View>
                       <View
                         style={{
                           backgroundColor: COLORS.semiTransparentBlack,
-                          padding: SIZES.small,
-                          borderWidth: 1,
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
                           borderRadius: 10,
-                          borderColor: COLORS.primary,
+                          justifyContent: "center",
+                          alignItems: "center",
+                          zIndex: 9,
                         }}>
-                        <Feather
-                          name="zoom-in"
-                          size={SIZES.medium}
-                          color="white"
-                        />
+                        <View
+                          style={{
+                            backgroundColor: COLORS.semiTransparentBlack,
+                            padding: SIZES.small,
+                            borderWidth: 1,
+                            borderRadius: 10,
+                            borderColor: COLORS.primary,
+                          }}>
+                          <Feather
+                            name="zoom-in"
+                            size={SIZES.medium}
+                            color="white"
+                          />
+                        </View>
                       </View>
-                    </View>
-                  </MyButton>
-                )}
+                    </MyButton>
+                  );
+                }}
               />
             </View>
           </PagerView>
@@ -206,13 +275,14 @@ export default function CardDetails({
           <Pressable
             style={{
               zIndex: 9,
-              height: "100%",
-              width: "100%",
+              flex: 1,
               backgroundColor: COLORS.semiTransparentBlack,
               justifyContent: "center",
               alignItems: "center",
               paddingRight: SIZES.medium,
               paddingLeft: SIZES.medium,
+              paddingTop: insets.top + SIZES.small,
+              overflow: "hidden",
             }}
             onPress={() => {
               setPopupVisible(false);
@@ -220,7 +290,7 @@ export default function CardDetails({
             <Pressable
               style={{
                 width: "100%",
-                height: imgHeight,
+                maxHeight: imgHeight,
               }}>
               <Pressable
                 onPress={() => {
@@ -248,7 +318,7 @@ export default function CardDetails({
                   maxHeight: "100%",
                   zIndex: 10,
                 }}
-                resizeMode="cover"
+                resizeMode="contain"
               />
             </Pressable>
           </Pressable>

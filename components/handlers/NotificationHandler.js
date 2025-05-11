@@ -3,6 +3,7 @@ import { Platform } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
+import { storeValue } from "../../utils/storage";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -22,16 +23,7 @@ export default function NotificationHandler() {
       if (token) {
         setExpoPushToken(token);
         console.log("Expo Push Token:", token);
-        await fetch(
-          "https://webhook.site/7c18dfb6-20cf-4ec7-b1c3-c6a47808ab8c",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ token: token }),
-          }
-        );
+        await storeValue("notificationToken", token);
       }
     });
 

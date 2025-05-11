@@ -10,7 +10,7 @@ import {
 import { Dropdown, MultiSelect } from "react-native-element-dropdown";
 import { FontAwesome6, MaterialIcons } from "@expo/vector-icons";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 

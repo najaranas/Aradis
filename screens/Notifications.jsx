@@ -1,70 +1,117 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React, { useEffect, useState } from "react";
-import TopTabPage from "../components/TopTabPage";
+//
+// Notifications.jsx
+// This component is responsible for displaying  notifications to the user.
+// It uses React Native's FlatList to render a list of notifications.
+// It connects to a WebSocket to receive real-time updates for notifications.
+// It also includes a loading state and handles marking notifications as read.
+// It uses the useTranslation hook for internationalization and the useTheme hook for theming.
+//  It also includes a custom button component for handling button presses.
+//
+
+import { useEffect, useState } from "react";
+import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { DotIndicator } from "react-native-indicators";
+
+import TopTabPage from "../components/TopTabPage";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { NOTIFICATIONS } from "../constants/data";
-import { useTheme } from "../contexts/ThemeProvider";
-import { Image } from "react-native";
+import { useTheme } from "../hooks/useTheme";
 import { silentNotification } from "../constants/dataImage";
 import { useTranslation } from "react-i18next";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { fetchNotifications } from "../utils/api/tagApi";
+import MyButton from "../components/MyButton";
+
+import { getStoredValue } from "../utils/storage";
 import {
-  BallIndicator,
-  BarIndicator,
-  DotIndicator,
-  MaterialIndicator,
-  PacmanIndicator,
-  PulseIndicator,
-  SkypeIndicator,
-  UIActivityIndicator,
-  WaveIndicator,
-} from "react-native-indicators";
+  connectNotificationSocket,
+  markNotificationAsRead,
+} from "../utils/api/notificationApi";
+import { useUser } from "../hooks/useUser";
 
 export default function Notifications() {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const BackHandler = () => {
-    navigation.goBack();
-  };
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [token, setToken] = useState("");
+  const { userData } = useUser();
+
+  const userId = userData?.id;
 
   useEffect(() => {
-    const loadNotifications = async () => {
-      try {
-        const data = await fetchNotifications();
-        setIsLoading(false);
-        setData(data);
-      } catch (error) {
-        console.error("error fetching notifications data : ", error);
-      }
+    const readToken = async () => {
+      const token = await getStoredValue("token");
+      setToken(token);
     };
-    loadNotifications();
+    readToken();
   }, []);
 
+  useEffect(() => {
+    if (!userId || !token) return;
+    setIsLoading(true);
+
+    const socket = connectNotificationSocket(
+      userId,
+      token,
+      (updated) => {
+        setNotifications(updated);
+        setIsLoading(false);
+      },
+      (count) => {
+        setUnreadCount(count);
+      }
+    );
+
+    return () => {
+      if (socket) socket.disconnect();
+    };
+  }, [userId, token]);
+
+  const btnPressHandler = async (notif) => {
+    navigation.navigate("Scanner");
+
+    if (notif.status === "unread") {
+      try {
+        const data = await markNotificationAsRead(token, notif.id);
+
+        console.log(data);
+
+        // ✅ Update UI immediately
+        setNotifications((prev) =>
+          prev.map((n) => (n.id === notif.id ? { ...n, status: "read" } : n))
+        );
+
+        setUnreadCount((prev) => Math.max(0, prev - 1));
+      } catch (error) {
+        console.error("Failed to mark notification as read:", error);
+      }
+    }
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.notificationsCard}>
-      <View style={styles.cardHeader}>
-        <Text style={[styles.typeText, { color: theme.text }]}>
-          {item?.title}
-        </Text>
-        <Text style={styles.timeText}>{item?.timestamp}</Text>
+    <MyButton pressHandler={() => btnPressHandler(item)}>
+      <View style={styles.notificationsCard}>
+        <View style={styles.cardHeader}>
+          <Text style={[styles.typeText, { color: theme.text }]}>
+            {item?.title}
+          </Text>
+          <Text style={styles.timeText}>{item?.formattedDate}</Text>
+        </View>
+        <View style={styles.descriptionContainer}>
+          <Text style={[styles.description, { color: theme.text }]}>
+            {item?.message}
+          </Text>
+          {item?.status === "unread" && <View style={styles.unreadIndicator} />}
+        </View>
       </View>
-      <View style={styles.descriptionContainer}>
-        <Text style={[styles.description, { color: theme.text }]}>
-          {item?.description}
-        </Text>
-        {item?.status?.toLowerCase() === "unread" && (
-          <View style={styles.unreadIndicator} />
-        )}
-      </View>
-    </View>
+    </MyButton>
   );
+
+  const BackHandler = () => navigation.goBack();
 
   return (
     <View style={[styles.container, { paddingTop: SIZES.small + insets.top }]}>
@@ -72,16 +119,20 @@ export default function Notifications() {
         text={t("notifications.notifications")}
         BackHandler={BackHandler}
       />
+
       {isLoading ? (
         <View style={styles.indicatorContainer}>
-          <DotIndicator color={COLORS.gray} count={3} size={SIZES.medium} />
+          <DotIndicator
+            color={COLORS.secondary}
+            count={3}
+            size={SIZES.medium}
+          />
         </View>
-      ) : data?.length > 0 ? (
+      ) : notifications.length > 0 ? (
         <FlatList
-          data={data}
+          data={notifications}
           renderItem={renderItem}
-          keyExtractor={(item, index) => index.toString()}
-          estimatedItemSize={100}
+          keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
@@ -106,20 +157,16 @@ const styles = StyleSheet.create({
     padding: 1.5 * SIZES.medium,
     gap: SIZES.small,
   },
-
   notificationsCard: {
     paddingVertical: 0.8 * SIZES.large,
   },
   cardHeader: {
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    gap: SIZES.small,
   },
   typeText: {
     fontFamily: FONTS.medium,
     fontSize: 1.1 * SIZES.medium,
-    flexShrink: 1,
   },
   timeText: {
     color: COLORS.gray,
@@ -127,15 +174,15 @@ const styles = StyleSheet.create({
   },
   descriptionContainer: {
     flexDirection: "row",
-    alignItems: "flex-start",
     justifyContent: "space-between",
   },
   description: {
     fontSize: SIZES.medium,
     fontFamily: FONTS.regular,
-    lineHeight: 20,
     flexShrink: 1,
+    opacity: 0.7,
   },
+
   unreadIndicator: {
     backgroundColor: COLORS.blue,
     width: SIZES.small,
@@ -143,14 +190,12 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.small / 2,
   },
   separator: {
-    height: SIZES.large,
     height: 0.5,
     backgroundColor: COLORS.lightGray,
   },
   silentImg: {
     width: 5 * SIZES.xLarge,
     height: 5 * SIZES.xLarge,
-    resizeMode: "cover",
   },
   noDataContainer: {
     flex: 1,

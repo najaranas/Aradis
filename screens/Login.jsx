@@ -1,16 +1,18 @@
+//
+// Loading.jsx
+// This component is responsible for displaying a loading screen while checking
+// the user's login status and theme preference. It uses React Navigation for navigation,
+// AsyncStorage for storing user data, and Expo's NavigationBar API for setting the navigation bar color.
+// It also includes a check for internet connectivity using a custom component.
+//
+
 import {
   Image,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  SafeAreaView,
   StyleSheet,
   Text,
   TouchableWithoutFeedback,
   View,
-  I18nManager,
-  Pressable,
-  ActivityIndicator,
 } from "react-native";
 import { useEffect, useLayoutEffect, useState } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -22,14 +24,12 @@ import BouncyCheckbox from "react-native-bouncy-checkbox";
 import MyButton from "../components/MyButton";
 import { useNavigation } from "@react-navigation/native";
 import CheckInternet from "../components/handlers/CheckInternet";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import * as NavigationBar from "expo-navigation-bar";
 import { useTranslation } from "react-i18next";
 import CustomToast from "../components/CustomToast";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuth } from "../contexts/AuthProvider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { storeValue } from "../utils/asyncStorage";
+import { getStoredValue, storeValue } from "../utils/storage";
 import {
   BallIndicator,
   BarIndicator,
@@ -41,6 +41,11 @@ import {
   UIActivityIndicator,
   WaveIndicator,
 } from "react-native-indicators";
+import {
+  authenticateUser,
+  registerNotificationToken,
+} from "../utils/api/loginApi";
+import { useUser } from "../hooks/useUser";
 
 export default function Login() {
   const { theme } = useTheme();
@@ -55,13 +60,15 @@ export default function Login() {
   const isRTL = i18n.language === "ar";
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-  const { changeUserData } = useAuth();
+
+  const { saveUserData } = useUser();
 
   const [toast, setToast] = useState({
     show: false,
     message: "",
     type: "",
   });
+
   useEffect(() => {
     requestAnimationFrame(async () => {
       await NavigationBar.setBackgroundColorAsync(theme.background);
@@ -109,66 +116,45 @@ export default function Login() {
     }
   };
 
-  const fetchData = async () => {
+  const handleLoginRequest = async () => {
     try {
-      const res = await fetch(
-        `${process.env.EXPO_PUBLIC_API_BASE_URL}/auth/sign-in`,
-        {
-          method: "POST",
-          body: JSON.stringify({
-            email: userFieldsData.email,
-            password: userFieldsData.password,
-          }),
-          headers: { "Content-Type": "application/json" },
-        }
+      const user = await authenticateUser(
+        userFieldsData.email,
+        userFieldsData.password
       );
-      const user = await res.json();
-      console.log(user);
-      console.log(res);
 
-      if (res.ok && user) {
-        changeUserData({
-          ...user.data,
-          role: user.data.role,
-          userService: user.data.userService,
-          userCategory: user.data.userCategory,
-          firstName: user.data.firstName,
-          lastName: user.data.lastName,
-          image: user.data.image,
-        });
-        // store token in local storage
+      saveUserData(user?.data);
 
-        storeValue("token", user.token);
+      await storeValue("token", user?.token);
+      await storeValue("data", JSON.stringify(user?.data));
 
-        storeValue(
-          "data",
-          JSON.stringify({
-            ...user.data,
-            role: user.data.role,
-            userService: user.data.userService,
-            userCategory: user.data.userCategory,
-            firstName: user.data.firstName,
-            lastName: user.data.lastName,
-            image: user.data.image,
-          })
+      const notificationToken = await getStoredValue("notificationToken");
+
+      console.log("Notification Token:", notificationToken);
+      console.log("User ID:", user?.id);
+      console.log("User Token:", user?.token);
+      console.log("User Data:", user);
+
+      if (notificationToken) {
+        await registerNotificationToken(
+          notificationToken,
+          user?.data?.id,
+          user?.token
         );
-
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
-        });
-        return;
-      } else {
-        setToast({ message: user.message, type: "error", show: true });
       }
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
+      });
     } catch (error) {
       setToast({
-        message: t("login.connection_error"),
+        message: error.message || t("login.connection_error"),
         type: "error",
         show: true,
       });
     } finally {
-      setIsLoading(false); // Set loading to false when done
+      setIsLoading(false);
     }
   };
 
@@ -192,8 +178,8 @@ export default function Login() {
       return;
     }
 
-    setIsLoading(true); // Set loading to true before fetch
-    fetchData();
+    setIsLoading(true);
+    handleLoginRequest();
   };
 
   const onChangeText = (text, type) => {
@@ -303,11 +289,11 @@ export default function Login() {
         </View>
 
         <MyButton pressHandler={() => loginPressHandler()} disabled={isLoading}>
-          <View style={[styles.button, { opacity: isLoading ? 0.7 : 1 }]}>
+          <View style={[styles.button, { opacity: isLoading ? 0.5 : 1 }]}>
             {isLoading ? (
               <View>
                 <BarIndicator
-                  color={COLORS.lightGray}
+                  color={COLORS.white}
                   count={4}
                   size={1.4 * SIZES.medium}
                   animationDuration={3000}

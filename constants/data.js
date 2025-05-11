@@ -81,6 +81,14 @@ export const getMYPROFILEDATA = (userData) => [
     translationKey: "myProfile.phone_number",
   },
   {
+    key: "service",
+    label: "service Title",
+    value: userData?.userService || "service",
+    keyboardType: "default",
+    editable: false,
+    translationKey: "myProfile.service_title",
+  },
+  {
     key: "role",
     label: "Role/Job Title",
     value: userData?.userCategory || "Role",
@@ -1807,6 +1815,7 @@ export const FORMTOAST_TYPES = {
     iconColor: "#00B050",
   },
 };
+
 export const HOMEDATA = [
   {
     id: 1,

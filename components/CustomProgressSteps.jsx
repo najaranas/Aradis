@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { ProgressStep, ProgressSteps } from "react-native-progress-steps";
 import { useTranslation } from "react-i18next";
 

@@ -6,6 +6,7 @@ import avatar from "../assets/images/avatar.jpg";
 import workerMan from "../assets/images/worker-men.png";
 import workerWomen from "../assets/images/worker-women.png";
 import silentNotification from "../assets/icons/silent.png";
+import noTagsImage from "../assets/icons/no-tags.png";
 import tagIcon from "../assets/icons/tag.png";
 import check from "../assets/icons/check.png";
 
@@ -17,6 +18,7 @@ export {
   workerMan,
   workerWomen,
   silentNotification,
+  noTagsImage,
   tagIcon,
   check,
 };

@@ -1,4 +1,10 @@
-import React from "react";
+//
+// QRCodeOverlay.jsx
+// This component is responsible for rendering the QR code scanning overlay.
+// It includes a transparent scanning area with corner markers and an overlay for instructions.
+// It uses React Native's StyleSheet for styling and the useTranslation hook for internationalization.
+//
+
 import { View, Text, StyleSheet } from "react-native";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import { useTranslation } from "react-i18next";

@@ -17,6 +17,7 @@
     "email_address": "Adresse E-mail",
     "phone_number": "Numéro de Téléphone",
     "role_job_title": "Rôle/Titre du Poste",
+    "service_title": "Service",
     "id": "ID"
   },
   "languages": {
@@ -412,7 +413,8 @@
   "tagsReporting": {
     "headerTitle": "Signalement d'anomalies (Étiquettes)",
     "searchPlaceholder": "Rechercher des étiquettes...",
-    "noTags": "Aucune étiquette trouvée",
+    "no_tags": "Aucune étiquette disponible",
+    "check_back_tags": "Revenez plus tard pour les tâches, les échéances, l'activité des zones et les étiquettes liées aux machines.",
     "filter": {
       "title": "Filtre",
       "close": "Fermer",

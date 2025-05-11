@@ -21,6 +21,7 @@
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.1.6",
     "@react-navigation/native-stack": "^7.2.0",
+    "@reduxjs/toolkit": "^2.8.1",
     "@shopify/flash-list": "1.7.3",
     "date-fns": "^4.1.0",
     "expo": "^52.0.44",
@@ -34,6 +35,7 @@
     "expo-linear-gradient": "~14.0.2",
     "expo-navigation-bar": "~4.0.9",
     "expo-notifications": "^0.29.14",
+    "expo-secure-store": "^14.2.3",
     "expo-splash-screen": "^0.29.22",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "^4.0.9",
@@ -66,7 +68,9 @@
     "react-native-screens": "^4.10.0",
     "react-native-shimmer-placeholder": "^2.0.9",
     "react-native-svg": "15.8.0",
-    "recyclerlistview": "^4.2.1"
+    "react-redux": "^9.2.0",
+    "recyclerlistview": "^4.2.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.26.7",

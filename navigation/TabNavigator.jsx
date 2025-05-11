@@ -1,4 +1,11 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+//
+// TabNavigator.jsx
+// This component is responsible for rendering the bottom tab navigator for the app.
+// It includes tabs for Home, Tags, Create Task, Notifications, and Profile.
+// It uses React Navigation for navigation, and Expo's NavigationBar API for setting the navigation bar color.
+// It also includes a check for internet connectivity using a custom component.
+
+import { useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, StyleSheet, TouchableWithoutFeedback, Text } from "react-native";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
@@ -6,28 +13,23 @@ import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import CheckInternet from "../components/handlers/CheckInternet";
 import ProfileStackNavigator from "./ProfileNavigator";
 import { StatusBar } from "expo-status-bar";
-import { useTheme } from "../contexts/ThemeProvider";
+// import { useTheme } from "../hooks/useTheme";
 import Tags from "../screens/Tags";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
-import {
-  getFocusedRouteNameFromRoute,
-  useNavigationState,
-} from "@react-navigation/native";
+
+import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import CreateTask from "../screens/CreateTask";
 
-import Fpss from "../screens/Fpss";
+// import Fpss from "../screens/Fpss";
 import Notifications from "../screens/Notifications";
 import * as NavigationBar from "expo-navigation-bar";
 import HomeStackNavigator from "./HomeStackNavigator";
-import { NOTIFICATIONS } from "../constants/data";
-import { fetchNotifications } from "../utils/api/tagApi";
+import Home from "../screens/Home";
+import Actions from "../screens/Actions";
+import { useTheme } from "../hooks/useTheme";
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
-  const { theme } = useTheme();
+  const { theme, mode, toggleTheme } = useTheme();
   const [notificationsLength, setNotificationsLength] = useState(null);
   const getRoutename = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route);
@@ -42,18 +44,7 @@ export default function TabNavigator() {
     return "flex";
   };
 
-  useEffect(() => {
-    const loadNotifications = async () => {
-      try {
-        const data = await fetchNotifications();
-        console.log(data.le);
-        setNotificationsLength(data?.length);
-      } catch (error) {
-        console.error("error fetching notifications data : ", error);
-      }
-    };
-    loadNotifications();
-  }, []);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     requestAnimationFrame(async () => {
@@ -180,11 +171,7 @@ export default function TabNavigator() {
         {/* <Tab.Screen name="Fps" component={Fpss} /> */}
         <Tab.Screen name="CreateTask" component={CreateTask} />
         <Tab.Screen name="Notifications" component={Notifications} />
-        <Tab.Screen
-          name="ProfileStack"
-          component={ProfileStackNavigator}
-          options={{ sceneStyle: { backgroundColor: theme.background } }}
-        />
+        <Tab.Screen name="ProfileStack" component={ProfileStackNavigator} />
       </Tab.Navigator>
     </View>
   );

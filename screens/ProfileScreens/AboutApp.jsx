@@ -1,18 +1,9 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ScrollView,
-  Button,
-  SafeAreaView,
-} from "react-native";
+import { View, Text, StyleSheet, Image, ScrollView } from "react-native";
 import { aradisBigLogo } from "../../constants/dataImage";
-import { COLORS, FONTS, SIZES } from "../../constants/theme";
+import { FONTS, SIZES } from "../../constants/theme";
 import TopTabPage from "../../components/TopTabPage";
 import { ABOUTAPPDATA } from "../../constants/data";
-import { useTheme } from "../../contexts/ThemeProvider";
+import { useTheme } from "../../hooks/useTheme";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
 
@@ -37,7 +28,7 @@ export default function AboutApp({ navigation }) {
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollView}>
-        {/* Our App */}
+        {/* Our App  */}
         <View style={styles.descriptionBox}>
           <Text style={[styles.descriptionTitle, { color: theme.text }]}>
             {t("aboutApp.sections_title.1_1")}

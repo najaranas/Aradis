@@ -60,6 +60,7 @@ export default function AddTaskForm({
   const { t, i18n } = useTranslation();
 
   const isRTL = I18nManager.isRTL || i18n.language === "ar";
+
   /**
    * Automatically adds a new image field if 4 or more images are selected.
    */
@@ -101,6 +102,7 @@ export default function AddTaskForm({
       });
     }
   }, [formData["images"]]);
+
   // Remove the second useEffect that depends on isImgItemAdded
   /**
    * Updates an image in the selected images list.

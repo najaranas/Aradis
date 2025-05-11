@@ -7,6 +7,8 @@ import MyButton from "../MyButton";
 import CardInfo from "./CardInfo";
 import CardDetails from "./CardDetails";
 import { useTranslation } from "react-i18next";
+import { formatDate } from "date-fns";
+import { ar, fr } from "date-fns/locale";
 
 export default function Card({ cardData, preventData, isUpdated, isRTL }) {
   const { t } = useTranslation();
@@ -15,6 +17,98 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
     color: COLORS.gray,
     bgColor: "transparent",
   });
+
+  const cardDetails = [
+    {
+      label: "date",
+      value: formatDate(cardData?.createdAt || null, "MM-dd-yyyy : HH:mm"),
+    },
+    {
+      label: "deadline",
+      value: "Feb 10, 2023",
+    },
+    { label: "zone", value: cardData?.zone },
+    {
+      label: "machine",
+      value: cardData?.machine,
+    },
+    { label: "equipment", value: cardData?.equipment },
+    {
+      label: "responsiblePerson",
+      value: [
+        {
+          name: "Person A",
+          avatar:
+            "https://i.pinimg.com/736x/de/2b/d1/de2bd14c37a797e1913b1cdd4766c9e6.jpg",
+        },
+        {
+          name: "Person B",
+          avatar:
+            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
+        },
+        {
+          name: "Person B",
+          avatar:
+            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
+        },
+        {
+          name: "Person B",
+          avatar:
+            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
+        },
+        {
+          name: "Person B",
+          avatar:
+            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
+        },
+        {
+          name: "Person B",
+          avatar:
+            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
+        },
+        {
+          name: "Person B",
+          avatar:
+            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
+        },
+      ],
+    },
+    {
+      label: "foundedBy",
+      value: [
+        {
+          name: `${cardData?.user?.firstName} ${cardData?.user?.lastName}`,
+          avatar: cardData?.user?.image,
+        },
+      ],
+    },
+    // {
+    //   label: "actions",
+    //   value: cardData?.tagAction,
+    // },
+    {
+      label: "description",
+      value: cardData?.description,
+    },
+    {
+      label: "equipment",
+      value: cardData?.equipment,
+    },
+  ];
+
+  const progressSteps = {
+    activeStep:
+      cardData?.category === "open"
+        ? 1
+        : cardData?.category === "In progress"
+        ? 2
+        : 3,
+    data: [
+      { label: "Open", id: 1 },
+      { label: "In Progress", id: 2 },
+      { label: "Resolved", id: 3 },
+    ],
+  };
 
   const getCategoryColor = (category) => {
     switch (category?.toLowerCase()) {
@@ -56,17 +150,19 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
         },
       ]}>
       <CardHeader
-        TagNumber={cardData.tagNumber}
-        category={t(`cardDetails.category.${cardData.category}`)}
-        priority={cardData.priority}
+        TagNumber={cardData?.tagId}
+        category={t(
+          `cardDetails.category.${cardData?.category?.toLowerCase()}`
+        )}
+        priority={cardData?.priority?.toLowerCase()}
         categoryColor={categoryColor}
         isRTL={isRTL}
       />
 
-      <CustomProgressSteps DATA={cardData.progressSteps} />
+      <CustomProgressSteps DATA={progressSteps} />
 
       <CardInfo
-        cardDetails={cardData.taskDetails}
+        cardDetails={cardDetails}
         preventData={preventData}
         isRTL={isRTL}
       />
@@ -111,7 +207,9 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
         <CardDetails
           setModalVisible={setModalVisible}
           cardData={cardData}
+          cardDetails={cardDetails}
           categoryColor={categoryColor}
+          progressSteps={progressSteps}
           isRTL={isRTL}
         />
       </Modal>

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { ADDFPSDETAILS } from "../constants/data";
 import PagerView from "react-native-pager-view";
 

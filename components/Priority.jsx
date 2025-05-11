@@ -18,7 +18,7 @@ const priorities = {
     icon: "alert",
     iconColor: "#ffaa00",
   },
-  t_urgent: {
+  "t.urgent": {
     label: "T.Urgent",
     bgColor: "#FF000030",
     icon: "alert-octagon",
@@ -28,7 +28,7 @@ const priorities = {
 
 export default function Priority({ priority }) {
   const { t } = useTranslation();
-  const currentPriority = priorities[priority?.toLowerCase()] || "";
+  const currentPriority = priorities[priority] || "";
 
   return (
     <MyButton noOpacity>
@@ -54,7 +54,11 @@ export default function Priority({ priority }) {
             fontFamily: FONTS.regular,
             color: currentPriority?.iconColor,
           }}>
-          {t(`cardDetails.priority.options.${priority}`)}
+          {t(
+            `cardDetails.priority.options.${
+              priority === "t.urgent" ? "t_urgent" : priority
+            }`
+          )}
         </Text>
       </View>
     </MyButton>

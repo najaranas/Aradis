@@ -1,3 +1,8 @@
+//
+// ConfirmScan.jsx
+// This component is responsible for rendering the confirmation screen after a scan.
+// It includes a button to navigate back to the home screen and displays the current date and time.
+//
 import {
   BackHandler,
   I18nManager,
@@ -10,7 +15,7 @@ import React, { useCallback, useEffect } from "react";
 import * as tabNavigation from "expo-navigation-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import { StatusBar } from "expo-status-bar";
 import { COLORS, FONTS, SIZES } from "../constants/theme";

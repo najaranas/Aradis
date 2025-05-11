@@ -8,7 +8,7 @@ import {
 import React from "react";
 import * as Progress from "react-native-progress";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import { StyleSheet } from "react-native";
 

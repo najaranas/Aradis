@@ -1,10 +1,13 @@
-import React from "react";
+//
+// HomeStackNavigator.jsx
+// This file defines a stack navigator for the home screen and actions screen.
+//
+
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { I18nManager, StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import Home from "../screens/Home";
 import Actions from "../screens/Actions";
-import Scanner from "../screens/Scanner";
 import { useTranslation } from "react-i18next";
 
 const HomeStack = createNativeStackNavigator();

@@ -1,10 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
-import React from "react";
 import { COLORS, FONTS, SIZES } from "../../constants/theme";
-import MyButton from "../MyButton";
-import { useTheme } from "../../contexts/ThemeProvider";
+import { useTheme } from "../../hooks/useTheme";
 import Priority from "../Priority";
-import { t } from "i18next";
 import { useTranslation } from "react-i18next";
 
 export default function CardHeader({

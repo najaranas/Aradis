@@ -1,7 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { COLORS, FONTS, SIZES } from "../../constants/theme";
 import { Image } from "expo-image";
-import { useTheme } from "../../contexts/ThemeProvider";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Menu,
@@ -11,11 +10,13 @@ import {
 } from "react-native-popup-menu";
 import { ScrollView } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
+import { useTheme } from "../../hooks/useTheme";
 
 export default function CardInfo({ cardDetails, preventData, isRTL }) {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
+  console.log(cardDetails);
   return (
     <View style={styles.container}>
       {cardDetails?.map((item, index) => {
@@ -99,6 +100,9 @@ export default function CardInfo({ cardDetails, preventData, isRTL }) {
                       },
                     ]}>
                     <ScrollView
+                      indicatorStyle={
+                        theme.name === "light" ? "black" : "white"
+                      }
                       style={{
                         maxHeight: 3.7 * SIZES.xLarge,
                         paddingLeft: SIZES.small,

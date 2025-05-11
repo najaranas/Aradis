@@ -1,20 +1,28 @@
 import { Image, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
+import { DotIndicator } from "react-native-indicators";
+import { workerMan } from "../constants/dataImage";
 
-export default function ProfilePictureData({ img, name, id }) {
-  const { theme } = useTheme();
-
+export default function ProfilePictureData({
+  img,
+  name,
+  id,
+  isImgLoading,
+  theme,
+}) {
   return (
     <View style={styles.container}>
       <View style={[styles.img, { backgroundColor: COLORS.lightGray }]}>
-        <Image
-          source={{
-            uri: img,
-          }}
-          style={styles.img}
-        />
+        {isImgLoading ? (
+          <DotIndicator color={COLORS.gray} count={3} size={SIZES.small} />
+        ) : (
+          <Image
+            source={typeof img === "string" ? { uri: img } : img}
+            style={styles.img}
+          />
+        )}
       </View>
       <View style={styles.texContainer}>
         <Text style={[styles.mainText, { color: theme.text }]}>{name}</Text>

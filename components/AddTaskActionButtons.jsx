@@ -1,7 +1,7 @@
 import { I18nManager, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import MyButton from "./MyButton";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import { COLORS, SIZES } from "../constants/theme";
 

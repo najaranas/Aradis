@@ -9,7 +9,7 @@ import React, { useRef, useState } from "react";
 import TagFpsHeader from "../components/TagFpsHeader";
 import { FONTS, SIZES } from "../constants/theme";
 import { SimpleLineIcons } from "@expo/vector-icons";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import SearchFilter from "../components/SearchFilter";
 import { useTranslation } from "react-i18next";
 import { FlashList } from "@shopify/flash-list";

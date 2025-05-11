@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { View, StyleSheet, Pressable } from "react-native";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 
 export default function CustomBottomSheet({
   isVisible,

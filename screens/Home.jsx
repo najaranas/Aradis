@@ -1,25 +1,28 @@
-import React, { useCallback, useEffect, useState } from "react";
+//
+// Home.jsx
+// This component is responsible for rendering the home screen of the app.
+// It includes a header with a greeting and date, a stats section, and a scrollable list of cards.
+// It uses React Navigation for navigation, and Expo's NavigationBar API for setting the navigation bar color.
+// It also includes a check for internet connectivity using a custom component.
+// It uses the useTranslation hook for internationalization and the useTheme hook for theming.
+//
+
+import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import { formatDate } from "date-fns";
 import { ar, fr, enUS } from "date-fns/locale";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import {
-  useFocusEffect,
-  useIsFocused,
-  useNavigation,
-} from "@react-navigation/native";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useTheme } from "../hooks/useTheme";
 import MyButton from "../components/MyButton";
 import { useTranslation } from "react-i18next";
 import { Image } from "expo-image";
-import { tagIcon } from "../constants/dataImage";
 import { StatusBar } from "expo-status-bar";
 import { HOMEDATA, TAGS } from "../constants/data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuth } from "../contexts/AuthProvider";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { fetchTags } from "../utils/api/tagApi";
+import { getStoredValue } from "../utils/storage";
+import { useUser } from "../hooks/useUser";
 
 export default function Home() {
   const { theme } = useTheme();
@@ -27,19 +30,19 @@ export default function Home() {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const isScreenFocused = useIsFocused();
-  const { userData } = useAuth();
+  const { userData } = useUser();
 
   const date = new Date();
 
-  const [tags, setTags] = useState([]);
-
-  const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL;
   useEffect(() => {
     const fetchData = async () => {
-      const token = await AsyncStorage.getItem("token");
-      const response = await fetch(`${apiBaseUrl}/notifications/${token}`, {
-        headers: { Authorization: `${token}` },
-      });
+      const token = await getStoredValue("token");
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_BASE_URL}/notifications/${token}`,
+        {
+          headers: { Authorization: `${token}` },
+        }
+      );
       const res = await response.json();
       console.log(res);
     };
@@ -57,21 +60,6 @@ export default function Home() {
   const cardPressHandler = (path) => {
     if (!path) return;
     navigation.navigate(path);
-  };
-
-  const getStoredItem = async (item, defaultValue) => {
-    try {
-      const value = await AsyncStorage.getItem(item);
-      return value || defaultValue;
-    } catch (error) {
-      console.error(`Error Reading ${item}:`, error);
-      return defaultValue;
-    }
-  };
-  const fetchLoginCheckValue = async () => {
-    const storedLoginCheck = await getStoredItem("isLoginSaved");
-    console.log("Stored login Check :", storedLoginCheck);
-    return storedLoginCheck;
   };
 
   return (
@@ -108,13 +96,13 @@ export default function Home() {
             </MyButton>
           </View>
         </View>
-
         <Text style={styles.dateText}>
           {formatDate(date, "EEEE, d MMM yyyy", {
             locale:
               i18n.language === "ar" ? ar : i18n.language === "fr" ? fr : enUS,
           })}
         </Text>
+
         <View style={styles.statsContainer}>
           <View style={styles.statItem}>
             <Text style={styles.statNumber}>05</Text>

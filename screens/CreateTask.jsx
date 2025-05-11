@@ -1,18 +1,17 @@
-import {
-  Modal,
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import React, { useRef, useState } from "react";
-import { useTheme } from "../contexts/ThemeProvider";
+//
+// CreateTask.jsx
+// This component is responsible for rendering the Create Task screen.
+// It includes a segmented control for adding tags and FPS.
+// It uses React Native's StyleSheet for styling and the useTranslation hook for internationalization.
+
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useRef, useState } from "react";
+import { useTheme } from "../hooks/useTheme";
 import PagerView from "react-native-pager-view";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import AddTag from "../components/AddTag";
 import { Ionicons } from "@expo/vector-icons";
-import AddFps from "../components/AddFps";
+// import AddFps from "../components/AddFps";
 import { useTranslation } from "react-i18next";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

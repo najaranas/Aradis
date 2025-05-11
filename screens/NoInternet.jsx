@@ -1,3 +1,8 @@
+//
+// NoInternet.jsx
+// This component is responsible for rendering the "No Internet" screen.
+// It includes an image indicating no internet connection, a message, and a retry button.
+
 import { SafeAreaView, StyleSheet, Text, View, Image } from "react-native";
 import { noInternet } from "../constants/dataImage";
 import MyButton from "../components/MyButton";

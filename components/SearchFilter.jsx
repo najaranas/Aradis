@@ -10,7 +10,7 @@ import {
 import React from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import MyButton from "./MyButton";
 import { useTranslation } from "react-i18next";
 

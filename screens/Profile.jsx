@@ -1,8 +1,16 @@
+//
+// Prfile.jsx
+// This component displays the user's profile information and settings.
+// It includes options for changing the theme, language, and logging out.
+// It uses React Navigation for navigation, AsyncStorage for storing user data, and Expo's NavigationBar API for setting the navigation bar color.
+// It also includes a check for internet connectivity using a custom component.
+//
+
 import {
+  Button,
   FlatList,
   I18nManager,
   Modal,
-  SafeAreaView,
   StyleSheet,
   Switch,
   Text,
@@ -16,49 +24,83 @@ import { COLORS, FONTS, SIZES, THEME } from "../constants/theme";
 import { workerMan } from "../constants/dataImage";
 import { LANGUAGES, PROFILEMENUDATA } from "../constants/data";
 import MyButton from "../components/MyButton";
-import { useTheme } from "../contexts/ThemeProvider";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuth } from "../contexts/AuthProvider";
 import { useNavigation } from "@react-navigation/native";
-import { removeStoredValue } from "../utils/asyncStorage";
+import {
+  getStoredValue,
+  removeStoredValue,
+  storeValue,
+} from "../utils/storage";
+import { removeNotificationToken } from "../utils/api/logoutApi";
+import { useTheme } from "../hooks/useTheme";
+import { useUser } from "../hooks/useUser";
 
 export default function Profile() {
   const { theme, toggleTheme } = useTheme();
+
   const [popupVisible, setPopupVisible] = useState(false);
   const [isSwitchEnabled, setIsSwitchEnabled] = useState(
     theme.name === "light" ? false : true
   );
+  const [isImgLoading, setIsImgLoading] = useState(false);
+
   const { t, i18n } = useTranslation();
   const isRTL = I18nManager.isRTL || i18n.language === "ar";
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const { userData, changeUserData } = useAuth();
+  const { userData, clearUserData } = useUser();
 
   useEffect(() => {
-    if (isSwitchEnabled) {
-      storeTheme("DARK");
-    } else {
-      storeTheme("LIGHT");
-    }
+    const storeTheme = async () => {
+      if (isSwitchEnabled) {
+        await storeValue("theme", "DARK");
+      } else {
+        await storeValue("theme", "LIGHT");
+      }
+    };
+    storeTheme();
   }, [isSwitchEnabled]);
 
+  /**
+   * Toggles the switch for dark mode and light mode.
+   * Sets the state of the switch and calls the toggleTheme function.
+   * The toggleTheme function is responsible for changing the theme of the app.
+   * This function is called when the user toggles the switch.
+   */
   const toggleSwitch = () => {
     setIsSwitchEnabled((prev) => !prev);
     toggleTheme();
   };
 
+  /**
+   * Handles the logout process.
+   * Sets the popupVisible state to true to show the logout confirmation popup.
+   * This function is called when the user presses the logout button.
+   */
   const logoutHandler = () => {
     setPopupVisible(true);
   };
-  const confirmLogoutHandler = () => {
+
+  /**
+   * Handles the confirmation of logout.
+   * Removes the notification token and user data from AsyncStorage.
+   * Resets the navigation stack to the login screen.
+   * This function is called when the user confirms logout in the popup.
+   */
+  const confirmLogoutHandler = async () => {
     try {
-      AsyncStorage.removeItem("token");
+      const token = await getStoredValue("token");
+      const notificationToken = await getStoredValue("notificationToken");
+      console.log("userData", userData?.id);
+      console.log("notificationToken", notificationToken);
+      console.log("token", token);
+      await removeNotificationToken(notificationToken, userData?.id, token);
+      removeStoredValue("token");
       removeStoredValue("data");
-      changeUserData({});
+      clearUserData();
     } catch (error) {
       console.log("Error in deleting token", error);
     }
@@ -67,18 +109,41 @@ export default function Profile() {
 
     navigation.reset({ index: 0, routes: [{ name: "Login" }] });
   };
+
+  /**
+   * Handles the cancellation of logout.
+   * This function is called when the user presses the cancel button in the popup.
+   * It sets the popupVisible state to false.
+   */
   const cancelLogoutHandler = () => {
     setPopupVisible(false);
   };
 
+  /**
+   * Handles the navigation to different screens.
+   * This function is called when the user presses a menu item.
+   * It navigates to the specified route.
+   *
+   * @param {string} route - The route to navigate to.
+   */
   const navigateHandler = (route) => {
     navigation.navigate(route);
   };
 
+  /**
+   * Handles the back navigation.
+   * This function is called when the user presses the back button.
+   * It navigates back to the previous screen.
+   */
   const BackHandler = () => {
     navigation.goBack();
   };
 
+  /**
+   * Gets the text for the selected language.
+   * This function is used to display the selected language in the language menu item.
+   * @returns {string} - The text for the selected language.
+   */
   const getLanguageText = () => {
     const pickedLanguage = LANGUAGES.find(
       (item) => item.langCode === i18n.language
@@ -86,6 +151,17 @@ export default function Profile() {
     return pickedLanguage.text;
   };
 
+  /**
+   * MenuItem component
+   * This component is used to display each menu item in the profile screen.
+   * It includes an icon, text, and an optional switch for dark mode.
+   * @param {object} item - The menu item data.
+   * @param {boolean} isLogout - Indicates if the item is for logout.
+   * @param {boolean} isDarkMode - Indicates if the item is for dark mode.
+   * @param {boolean} isLanguage - Indicates if the item is for language selection.
+   * @param {object} theme - The current theme.
+   * @returns {JSX.Element} - The rendered menu item.
+   */
   const MenuItem = ({ item, isLogout, children, theme }) => (
     <View style={[styles.menuItem]}>
       <Ionicons
@@ -114,25 +190,18 @@ export default function Profile() {
     </View>
   );
 
-  const storeTheme = (theme) => {
-    try {
-      AsyncStorage.setItem("theme", theme);
-    } catch (error) {
-      console.log("Error in theme storing ", error);
-    }
-  };
-
   return (
     <View style={[styles.container, { paddingTop: SIZES.small + insets.top }]}>
       <View style={styles.TopContainer}>
         <TopTabPage text={t("profile.profile")} BackHandler={BackHandler} />
         <ProfilePictureData
-          img={userData?.image}
+          img={userData.image || workerMan}
           name={`${userData?.firstName} ${userData?.lastName}`}
           id={userData?.mat}
+          isImgLoading={isImgLoading}
+          theme={theme}
         />
       </View>
-
       <FlatList
         overScrollMode="never"
         bounces={false}
@@ -219,9 +288,7 @@ export default function Profile() {
           );
         }}
       />
-
       {/* Logout Confirmation Popup */}
-
       <Modal
         transparent
         visible={popupVisible}

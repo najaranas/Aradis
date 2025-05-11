@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import React, { useRef, useState } from "react";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { ADDTAGDETAILS } from "../constants/data";
 import PagerView from "react-native-pager-view";
 
@@ -21,9 +21,8 @@ import AddTaskActionButtons from "./AddTaskActionButtons";
 import AddTaskProgress from "./AddTaskProgress";
 import AddTaskForm from "./AddTaskForm";
 import { useTranslation } from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { generateId } from "../utils/generateTagId";
-import { getToken } from "../auth/authStorage";
+import { getStoredValue } from "../utils/storage";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
@@ -308,7 +307,7 @@ export default function AddTag() {
         }
       });
 
-      const token = await AsyncStorage.getItem("token");
+      const token = await getStoredValue("token");
 
       const res = await fetch(
         `${process.env.EXPO_PUBLIC_API_BASE_URL}/tag/${tagId}`,

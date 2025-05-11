@@ -1,7 +1,7 @@
 import { I18nManager, StyleSheet, TextInput, View } from "react-native";
 import React, { useEffect } from "react";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { useTranslation } from "react-i18next";
 
 export default function FormInput({

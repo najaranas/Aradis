@@ -1,4 +1,3 @@
-import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Profile from "../screens/Profile";
 import MyProfile from "../screens/ProfileScreens/MyProfile";
@@ -6,7 +5,7 @@ import Languages from "../screens/ProfileScreens/Languages";
 import AboutApp from "../screens/ProfileScreens/AboutApp";
 
 import { StyleSheet } from "react-native";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 
 const ProfileStack = createNativeStackNavigator();
 

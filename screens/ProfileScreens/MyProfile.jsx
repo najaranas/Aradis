@@ -1,24 +1,30 @@
+//
+// MyProfile.jsx
+// this component is responsible for displaying and editing the user's profile information.
+// It includes a profile image, user details, and a save button to apply changes.
+// It uses React Native components, Expo's ImagePicker for selecting images, and a custom button component.
+// It also utilizes context providers for theme and authentication management, and i18next for translations.
+//
+
 import {
   Image,
-  Pressable,
   StyleSheet,
   Text,
   TextInput,
   View,
   TouchableWithoutFeedback,
   Keyboard,
-  SafeAreaView,
   FlatList,
   TouchableHighlight,
 } from "react-native";
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { COLORS, FONTS, SIZES } from "../../constants/theme";
 import TopTabPage from "../../components/TopTabPage";
 import { Feather, FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { getMYPROFILEDATA } from "../../constants/data";
 import MyButton from "../../components/MyButton";
-import { useTheme } from "../../contexts/ThemeProvider";
+import { useTheme } from "../../hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import {
   Menu,
@@ -27,46 +33,62 @@ import {
   MenuTrigger,
 } from "react-native-popup-menu";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useAuth } from "../../contexts/AuthProvider";
+import { getStoredValue } from "../../utils/storage";
+import { updateUserProfileImage } from "../../utils/api/userApi";
+import { workerMan } from "../../constants/dataImage";
+import { useUser } from "../../hooks/useUser";
 
 export default function MyProfile({ navigation }) {
   const { theme } = useTheme();
-  const { userData } = useAuth();
-  const [selectedImg, setSelectedImg] = useState(userData?.image);
+  const { userData, updateUserData } = useUser();
+  const [selectedImg, setSelectedImg] = useState(userData?.image || workerMan);
   const [isdataChanged, setIsdataChanged] = useState(false);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef();
   const inputRefs = useRef([]);
-
   const MYPROFILEDATA = getMYPROFILEDATA(userData);
-
   const { t } = useTranslation();
+
+  /**
+   * Saves the profile image and navigates back to the previous screen.
+   * If no data has changed, it simply returns.
+   * Handles the image upload process and updates the user data.
+   */
   const saveBtnHandler = () => {
     if (!isdataChanged) return;
+    handleProfileImageUpload();
     navigation.goBack();
   };
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      "keyboardDidShow",
-      () => {
-        setKeyboardVisible(true);
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      "keyboardDidHide",
-      () => {
-        setKeyboardVisible(false);
-      }
-    );
+  /**
+   * Handles the profile image upload process.
+   * Updates the user data with the new image.
+   * Sends the image to the server for updating the user's profile.
+   * @async
+   * @returns {Promise<void>}
+   * @throws {Error} If the image upload fails.
+   *
+   */
+  const handleProfileImageUpload = async () => {
+    try {
+      const token = await getStoredValue("token");
+      updateUserData({ image: selectedImg });
+      const response = await updateUserProfileImage(
+        userData?.id,
+        selectedImg,
+        token
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
-
+  /**
+   * Scrolls to the input field at the specified index.
+   * This function is called when an input field is focused.
+   * It ensures that the input field is visible on the screen.
+   * @param {number} index - The index of the input field to scroll to.
+   */
   const scrollToInput = (index) => {
     if (scrollViewRef.current) {
       // Scroll to the item at the specified index
@@ -78,10 +100,22 @@ export default function MyProfile({ navigation }) {
     }
   };
 
+  /**
+   * Handles the back button press.
+   * Navigates back to the previous screen.
+   * This function is called when the back button in the header is pressed.
+   */
   const BackHandler = () => {
     navigation.goBack();
   };
 
+  /**
+   * Renders each item in the FlatList.
+   * Displays a label and an input field for user data.
+   * @param {object} item - The item data to render.
+   * @param {number} index - The index of the item in the list.
+   * @return {JSX.Element} The rendered item component.
+   * */
   const renderItem = ({ item, index }) => (
     <View style={styles.inputBox}>
       <Text style={[styles.labelText, { color: theme.darkGray }]}>
@@ -114,19 +148,18 @@ export default function MyProfile({ navigation }) {
   );
 
   /**
-   * Updates an image in the selected images list.
-   *
-   * Opens the image picker or camera based on the given type, updates the selected image,
-   * and triggers an animation effect.
-   * @param {number} index - The index of the image to update.
-   * @param {string} type - The source of the image ('photo' for gallery, 'camera' for camera).
+   * Handles the image selection process.
+   * Allows the user to choose an image from the library or take a new photo with the camera.
+   * @param {string} type - The type of image selection ("photo" or "camera").
+   * @throws {Error} If the image selection fails.
    */
   const changeImgHandler = async (type) => {
     try {
       let result;
+
       if (type === "photo") {
         result = await ImagePicker.launchImageLibraryAsync({
-          // allowsEditing: true,
+          allowsEditing: true,
           quality: 1,
         });
       } else if (type === "camera") {
@@ -144,9 +177,15 @@ export default function MyProfile({ navigation }) {
     }
   };
 
+  /**
+   * Handles the removal of the selected image.
+   * Sets the selected image back to the default user image.
+   * This function is called when the user selects the "Delete" option from the image picker popup.
+   */
   const removeImgHandler = () => {
     setSelectedImg(userData?.image);
   };
+
   return (
     <View style={[styles.container, { paddingTop: SIZES.small + insets.top }]}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

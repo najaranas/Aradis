@@ -1,3 +1,13 @@
+//
+// Languages.jsx
+// This component is responsible for rendering the language selection screen.
+// It includes a list of languages, a save button, and handles language changes.
+// It uses React Native's FlatList to render the list of languages.
+// It also includes a top tab page for navigation and a custom button component for handling button presses.
+// It uses the useTranslation hook for internationalization and the useTheme hook for theming.
+// It also includes a loading state and handles saving the selected language to AsyncStorage.
+//
+
 import {
   Image,
   StyleSheet,
@@ -11,7 +21,7 @@ import TopTabPage from "../../components/TopTabPage";
 import { COLORS, FONTS, SIZES } from "../../constants/theme";
 import { LANGUAGES } from "../../constants/data";
 import MyButton from "../../components/MyButton";
-import { useTheme } from "../../contexts/ThemeProvider";
+import { useTheme } from "../../hooks/useTheme";
 import { useTranslation } from "react-i18next";
 import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -47,7 +57,7 @@ export default function Languages({ navigation }) {
     }
   };
 
-  const changeLanguage = (lng) => {
+  const changeLanguage = async (lng) => {
     i18n.changeLanguage(lng);
 
     // Force RTL if Arabic
@@ -56,7 +66,7 @@ export default function Languages({ navigation }) {
     } else {
       I18nManager.forceRTL(false);
     }
-    storeLanguage(lng);
+    await storeValue("lang", lng);
   };
 
   const BackHandler = () => {

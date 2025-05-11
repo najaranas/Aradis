@@ -1,17 +1,9 @@
-import {
-  I18nManager,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import React from "react";
+import { I18nManager, StyleSheet, Text, View } from "react-native";
 import { FONTS, SIZES } from "../constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "../contexts/ThemeProvider";
 import { useTranslation } from "react-i18next";
 import MyButton from "./MyButton";
+import { useTheme } from "../hooks/useTheme";
 
 export default function TopTabPage({ text, children, BackHandler }) {
   const { theme } = useTheme();

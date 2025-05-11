@@ -1,64 +1,72 @@
+//
+// Loading.jsx
+// This component is responsible for displaying a loading screen while checking the user's login status and theme preference.
+// It uses React Navigation for navigation, AsyncStorage for storing user data, and Expo's NavigationBar API for setting the navigation bar color.
+// It also includes a check for internet connectivity using a custom component.
+//
+
 import { StyleSheet, SafeAreaView } from "react-native";
 import React, { useEffect, useLayoutEffect } from "react";
 import { COLORS, SIZES } from "../constants/theme";
 import { useNavigation } from "@react-navigation/native";
 import CheckInternet from "../components/handlers/CheckInternet";
-// import { Image } from "expo-image";
 import { SvgXml } from "react-native-svg";
 import { logoTextSvg } from "../constants/svg";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import * as NavigationBar from "expo-navigation-bar";
 import { StatusBar } from "expo-status-bar";
-import { useAuth } from "../contexts/AuthProvider";
-import { getStoredValue } from "../utils/asyncStorage";
+import { getStoredValue } from "../utils/storage";
+import { useUser } from "../hooks/useUser";
 
 export default function Loading() {
-  const naviagation = useNavigation();
+  const navigation = useNavigation();
   const { theme, toggleTheme } = useTheme();
-  const { changeUserData } = useAuth();
+  const { saveUserData } = useUser();
 
-  const getStoredItem = async (item, defaultValue = null) => {
-    try {
-      const value = await AsyncStorage.getItem(item);
-      return value || defaultValue;
-    } catch (error) {
-      console.error(`Error Reading ${item}:`, error);
-      return defaultValue;
-    }
+  /**
+   * Fetches the stored theme value from AsyncStorage and applies it.
+   * If no value is found, it defaults to the current theme.
+   */
+  const fetchThemeValue = async () => {
+    const storedTheme = await getStoredValue("theme", theme);
+    console.log("Stored theme:", storedTheme);
+    toggleTheme(storedTheme);
   };
 
+  /**
+   * Fetches the stored token from AsyncStorage and checks if the user is logged in.
+   * If the token is found, it retrieves the user data and navigates to the Home screen.
+   * If not, it navigates to the Login screen.
+   */
+  const fetchisLoggedIn = async () => {
+    const storedToken = await getStoredValue("token");
+    console.log("Stored token :", storedToken);
+    const timeOut = setTimeout(async () => {
+      if (storedToken) {
+        const userData = await getStoredValue("data", {});
+        console.log(userData);
+        saveUserData(JSON.parse(userData));
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
+        });
+      } else {
+        navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+      }
+    }, 2000);
+
+    return () => clearTimeout(timeOut);
+  };
+
+  /**
+   * Sets the navigation bar color and button style based on the current theme.
+   * This is done using the NavigationBar API from Expo.
+   */
   useEffect(() => {
     requestAnimationFrame(async () => {
       await NavigationBar.setBackgroundColorAsync(COLORS.primary);
       await NavigationBar.setButtonStyleAsync("light");
     });
-
-    const fetchThemeValue = async () => {
-      const storedTheme = await getStoredItem("theme", theme);
-      console.log("Stored theme:", storedTheme);
-      toggleTheme(storedTheme);
-    };
-
-    const fetchisLoggedIn = async () => {
-      const storedToken = await getStoredItem("token");
-      console.log("Stored token :", storedToken);
-      const timeOut = setTimeout(async () => {
-        if (storedToken) {
-          const userData = await getStoredValue("data", {});
-          console.log(userData);
-          changeUserData(JSON.parse(userData));
-          naviagation.reset({
-            index: 0,
-            routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
-          });
-        } else {
-          naviagation.reset({ index: 0, routes: [{ name: "Login" }] });
-        }
-      }, 2000);
-
-      return () => clearTimeout(timeOut);
-    };
 
     fetchisLoggedIn();
 

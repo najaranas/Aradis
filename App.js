@@ -1,4 +1,10 @@
-import React, { useState, useEffect } from "react";
+//
+// App.js
+// This is the main entry point of the application.
+// It initializes the app, sets up navigation, and handles authentication.
+//
+
+import { useState, useEffect } from "react";
 import "react-native-get-random-values";
 import "expo-dev-client";
 import "./firebase";
@@ -10,17 +16,14 @@ import Login from "./screens/Login";
 import NoInternet from "./screens/NoInternet";
 import NotificationHandler from "./components/handlers/NotificationHandler";
 import TabNavigator from "./navigation/TabNavigator";
-import { ThemeProvider } from "./contexts/ThemeProvider";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { MenuProvider } from "react-native-popup-menu";
 import { I18nextProvider } from "react-i18next";
 import i18next from "./i18n";
 import Scanner from "./screens/Scanner";
 import ConfirmScan from "./screens/ConfirmScan";
-import AuthProvider from "./contexts/AuthProvider";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { View } from "lucide-react-native";
-import { COLORS } from "./constants/theme";
+import { Provider } from "react-redux";
+import { store } from "./store/index";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,27 +58,25 @@ export default function App() {
   return (
     <NavigationContainer>
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <AuthProvider>
-          <ThemeProvider>
-            <MenuProvider>
-              <NotificationHandler />
-              <I18nextProvider i18n={i18next}>
-                <Stack.Navigator
-                  initialRouteName="Loading"
-                  screenOptions={{
-                    headerShown: false,
-                  }}>
-                  <Stack.Screen name="Loading" component={Loading} />
-                  <Stack.Screen name="Login" component={Login} />
-                  <Stack.Screen name="TabNavigator" component={TabNavigator} />
-                  <Stack.Screen name="Scanner" component={Scanner} />
-                  <Stack.Screen name="ConfirmScan" component={ConfirmScan} />
-                  <Stack.Screen name="NoInternet" component={NoInternet} />
-                </Stack.Navigator>
-              </I18nextProvider>
-            </MenuProvider>
-          </ThemeProvider>
-        </AuthProvider>
+        <Provider store={store}>
+          <MenuProvider>
+            <NotificationHandler />
+            <I18nextProvider i18n={i18next}>
+              <Stack.Navigator
+                initialRouteName="Loading"
+                screenOptions={{
+                  headerShown: false,
+                }}>
+                <Stack.Screen name="Loading" component={Loading} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="TabNavigator" component={TabNavigator} />
+                <Stack.Screen name="Scanner" component={Scanner} />
+                <Stack.Screen name="ConfirmScan" component={ConfirmScan} />
+                <Stack.Screen name="NoInternet" component={NoInternet} />
+              </Stack.Navigator>
+            </I18nextProvider>
+          </MenuProvider>
+        </Provider>
       </GestureHandlerRootView>
     </NavigationContainer>
   );

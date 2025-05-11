@@ -1,3 +1,16 @@
+//
+// Tags.jsx
+// This component is responsible for displaying a list of tags related to anomaly reports.
+// It includes a search bar, filter options, and a button to add new tags.
+// It uses React Native's FlatList to render the list of tags.
+// It also includes a loading state and handles refreshing the list of tags.
+// It uses the useTranslation hook for internationalization and the useTheme hook for theming.
+// It also includes a custom button component for handling button presses.
+// It fetches the tags from an API and applies sorting and filtering based on user input.
+// It uses the date-fns library for date formatting and parsing.
+// It also includes a custom bottom sheet component for displaying filter options.
+//
+
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
 import React, { useState, useEffect, useRef } from "react";
@@ -9,9 +22,11 @@ import {
   View,
   Modal,
   StatusBar,
+  Image,
+  RefreshControl,
 } from "react-native";
 import { COLORS, FONTS, SIZES, THEME } from "../constants/theme";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import MyButton from "../components/MyButton";
 import CustomBottomSheet from "../components/CustomBottomSheet";
 import { TAGFILTERDATA, TAGS } from "../constants/data";
@@ -33,6 +48,8 @@ import * as NavigationBar from "expo-navigation-bar";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fetchTags } from "../utils/api/tagApi";
+import { DotIndicator } from "react-native-indicators";
+import { noTagsImage } from "../constants/dataImage";
 
 /**
  * Home Screen Component
@@ -45,32 +62,45 @@ export default function Tags({}) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
-  const [tags, setTags] = useState(TAGS);
+  const [tags, setTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
   const [filterSelectedTags, setFilterSelectedTags] = useState([]);
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const listRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    loadTags();
+  }, []);
+
   /**
    * Initializes tag sorting on component mount
    * Applies default sorting to the initial tag list
    */
+  const loadTags = async () => {
+    try {
+      const tagsData = await fetchTags();
+      console.log(tagsData);
+      setTags(sortHandle(tagsData));
+      // setTags(filterTags(tagsData, false));
+      setIsLoading(false);
+      // sortHandle(tagsData);
+    } catch (error) {
+      console.error("Failed to load tags:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   useEffect(() => {
-    const loadTags = async () => {
-      try {
-        const tagsData = await fetchTags();
-        console.log(tagsData);
-        // setTags(tagsData);
-        // sortHandle(tagsData);
-      } catch (error) {
-        console.error("Failed to load tags:", error);
-      }
-    };
     loadTags();
     // setTags(filterTags(tags, false));
     // sortHandle(tags);
   }, []);
-  console.log(tags);
+
   /**
    * Opens the filter modal and dismisses keyboard
    * Triggered when user clicks the filter icon
@@ -125,11 +155,12 @@ export default function Tags({}) {
    * Closes the filter modal and scrolls to top after applying
    */
   const applyBtnHandler = () => {
-    const filteredWithSearch = filterTags(TAGS, true);
-    const filteredWithoutSearch = filterTags(TAGS, false);
+    // const filteredWithSearch = filterTags(tags, true);
+    // const filteredWithoutSearch = filterTags(tags, false);
 
-    setFilterSelectedTags(filteredWithoutSearch);
-    setTags(filteredWithSearch);
+    // setFilterSelectedTags(filteredWithoutSearch);
+    // setTags(filteredWithSearch);
+    setTags(sortHandle(tags));
     setFilterModalVisible(false);
     scrollToListTop();
   };
@@ -216,7 +247,13 @@ export default function Tags({}) {
    * @returns {Array} Sorted array of tags
    */
   const sortHandle = (data) => {
-    data.sort((firstItem, secondItem) => {
+    data.reverse().sort((firstItem, secondItem) => {
+      if (selectedFilters.sort == "1") {
+        return new Date(secondItem.createdAt) - new Date(firstItem.createdAt);
+      } else if (selectedFilters.sort == "2") {
+        return new Date(firstItem.createdAt) - new Date(secondItem.createdAt);
+      }
+
       const firstItemPriority = calculatePriorityValue(
         selectedFilters.sort,
         firstItem
@@ -226,13 +263,6 @@ export default function Tags({}) {
         selectedFilters.sort,
         secondItem
       );
-
-      if (selectedFilters.sort == "1") {
-        return (
-          parseDate(secondItem.date, "MMM dd, yyyy") -
-          parseDate(firstItem.date, "MMM dd, yyyy")
-        );
-      }
 
       return firstItemPriority - secondItemPriority;
     });
@@ -248,62 +278,73 @@ export default function Tags({}) {
    */
   const calculatePriorityValue = (priorityType, item) => {
     let priorityScore;
+
     switch (priorityType) {
       case 1: // Priority based on newest uploaded date
-        priorityScore = parseDate(item.date, "MMM dd, yyyy");
+        priorityScore = parseDate(item?.createdAt, "MMM dd, yyyy");
         break;
+
       case 2: // Priority based on oldest uploaded date
-        priorityScore = parseDate(item.date, "MMM dd, yyyy");
+        priorityScore = parseDate(item?.createdAt, "MMM dd, yyyy");
         break;
+
       case 3: // Priority based on priority level (T.Urgent => Urgent => Normal)
-        switch (item.priority.toLowerCase()) {
+        switch (item?.priority?.toLowerCase()) {
           case "normal":
             priorityScore = 3;
             break;
           case "urgent":
             priorityScore = 2;
             break;
-          case "t_urgent":
+          case "t.urgent":
             priorityScore = 1;
             break;
           default:
             break;
         }
         break;
+
       case 4: // Priority based on progress status (resolved -> open)
-        switch (item.progressSteps.activeStep) {
-          case "2":
+        switch (item?.status?.toLowerCase()) {
+          case "resolved":
+            priorityScore = 1;
+            break;
+          case "in progress":
             priorityScore = 2;
             break;
+          case "open":
+            priorityScore = 3;
+            break;
           default:
-            if (parseInt(item.progressSteps.activeStep) >= 3) {
-              priorityScore = 1;
-            } else if (parseInt(item.progressSteps.activeStep) <= 1) {
-              priorityScore = 3;
-            }
             break;
         }
         break;
+
       case 5: // Priority based on progress status (open -> resolved)
-        switch (item.progressSteps.activeStep) {
-          case "2":
+        switch (item?.status?.toLowerCase()) {
+          case "open":
+            priorityScore = 1;
+            break;
+          case "in progress":
             priorityScore = 2;
             break;
+          case "resolved":
+            priorityScore = 3;
+            break;
           default:
-            if (parseInt(item.progressSteps.activeStep) >= 3) {
-              priorityScore = 3;
-            } else if (parseInt(item.progressSteps.activeStep) <= 1) {
-              priorityScore = 1;
-            }
             break;
         }
         break;
+
       default:
         break;
     }
 
     return priorityScore;
   };
+
+  console.log("selectedFilters");
+  console.log(selectedFilters);
 
   /**
    * Filters tags based on selected filter criteria
@@ -312,20 +353,20 @@ export default function Tags({}) {
    * @param {boolean} withSearch - Whether to include search query in filtering
    * @returns {Array} Filtered and sorted array of tags
    */
-  const filterTags = (tag, withSearch) => {
+  const filterTags = (tags, withSearch) => {
     let filtredData = [];
 
-    filtredData = tag.filter((tag) => {
+    filtredData = tags.filter((tag) => {
       const tagProps = {
         category: tag?.category?.toLowerCase() || "",
         priority: tag?.priority?.toLowerCase() || "",
-        status: tag?.progressSteps?.activeStep?.toLowerCase() || "",
-        number: tag?.tagNumber?.toLowerCase() || "",
-        date: parseDate(tag?.date, "MMM dd, yyyy") || "",
+        status: tag?.status.toLowerCase() || "",
+        tagId: tag?.tagId?.toLowerCase() || "",
+        date: parseDate(tag?.createdAt, "MMM dd, yyyy") || "",
         search: withSearch
           ? tag?.category?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
             tag?.priority?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
-            tag?.tagNumber?.toLowerCase().includes(searchQuery?.toLowerCase())
+            tag?.tagId?.toLowerCase().includes(searchQuery?.toLowerCase())
           : true,
       };
 
@@ -344,9 +385,11 @@ export default function Tags({}) {
       const statusMatch =
         selectedFilters.status.length === 0 ||
         selectedFilters.status.some(
-          (filter) => filter.id?.toString().toLowerCase() === tagProps.status
+          (filter) => filter.name?.toLowerCase() === tagProps.status
         );
+
       const selectedToDate = selectedFilters.date.selectedToDate || new Date();
+
       const dateMatch =
         tagProps.date >= selectedFilters.date.selectedFromDate &&
         tagProps.date <= selectedToDate;
@@ -398,7 +441,74 @@ export default function Tags({}) {
       />
 
       {/* card list  */}
+
       <View style={{ flex: 1 }}>
+        {isLoading ? (
+          <View style={styles.indicatorContainer}>
+            <DotIndicator
+              color={COLORS.secondary}
+              count={3}
+              size={SIZES.medium}
+            />
+          </View>
+        ) : tags?.length > 0 ? (
+          <FlashList
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[theme.text]}
+                progressBackgroundColor={theme.background}
+              />
+            }
+            ref={listRef}
+            data={tags}
+            keyExtractor={(item, index) => index.toString()}
+            showsVerticalScrollIndicator={false}
+            ItemSeparatorComponent={() => (
+              <View style={{ height: SIZES.medium }} />
+            )}
+            contentContainerStyle={styles.tagsContentContainer}
+            estimatedItemSize={200}
+            renderItem={({ item, index }) => {
+              console.log(item);
+              return (
+                <Card
+                  cardData={item}
+                  preventData={[
+                    "deadline",
+                    "actions",
+                    "images",
+                    "machine",
+                    "equipment",
+                  ]}
+                />
+              );
+            }}
+          />
+        ) : (
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={[theme.text]}
+                progressBackgroundColor={theme.background}
+              />
+            }>
+            <View style={styles.noDataContainer}>
+              <Image source={noTagsImage} style={styles.noTagsImg} />
+              <Text style={[styles.noTagsTitle, { color: theme.text }]}>
+                {t("tagsReporting.no_tags")}
+              </Text>
+              <Text style={styles.noTagsText}>
+                {t("tagsReporting.check_back_tags")}
+              </Text>
+            </View>
+          </ScrollView>
+        )}
+      </View>
+      {/* <View style={{ flex: 1 }}>
         {tags.length ? (
           <FlashList
             ref={listRef}
@@ -440,7 +550,7 @@ export default function Tags({}) {
             </View>
           </TouchableWithoutFeedback>
         )}
-      </View>
+      </View> */}
 
       {/* Filter */}
 
@@ -910,5 +1020,39 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontFamily: FONTS.regular,
     fontSize: SIZES.large,
+  },
+  indicatorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  // no tags
+  noDataContainer: {
+    flex: 1,
+    paddingTop: 1.5 * SIZES.xLarge,
+    alignItems: "center",
+    gap: SIZES.small,
+  },
+  noTagsImg: {
+    width: 5 * SIZES.xLarge,
+    height: 5 * SIZES.xLarge,
+    resizeMode: "cover",
+  },
+  indicatorContainer: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  noTagsTitle: {
+    fontSize: SIZES.large,
+    fontFamily: FONTS.medium,
+    textAlign: "center",
+  },
+  noTagsText: {
+    fontSize: SIZES.medium,
+    fontFamily: FONTS.regular,
+    textAlign: "center",
+    color: COLORS.gray,
   },
 });

@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "react-native-modal-datetime-picker";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 
 export default function CustomDateTimePicker({
   pickerMode, // 'date' | 'time' | 'datetime'

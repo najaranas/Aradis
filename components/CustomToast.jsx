@@ -1,7 +1,19 @@
+//
+// CustomToast.jsx
+// This component is responsible for rendering a custom toast notification.
+// It uses React Native's Animated API for animations and Expo's FontAwesome and MaterialCommunityIcons for icons.
+// It also uses the useTheme hook for theming and the FORMTOAST_TYPES constant for different toast types.
+// It also includes a pause and resume functionality for the progress bar animation.
+// It includes a progress bar that indicates the duration of the toast notification.
+// It also includes a close button to dismiss the toast notification.
+// It uses the useEffect hook to handle the animation and the useSharedValue hook from react-native-reanimated for shared values.
+// It also includes a dismiss function to hide the toast notification after the duration is over.
+//
+
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import Animated, {
   useAnimatedStyle,

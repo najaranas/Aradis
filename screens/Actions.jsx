@@ -5,7 +5,7 @@ import { COLORS, FONTS, SIZES } from "../constants/theme";
 import MyButton from "../components/MyButton";
 import { useTranslation } from "react-i18next";
 import { StatusBar } from "expo-status-bar";
-import { useTheme } from "../contexts/ThemeProvider";
+import { useTheme } from "../hooks/useTheme";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

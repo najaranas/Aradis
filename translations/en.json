@@ -17,6 +17,7 @@
     "email_address": "Email Address",
     "phone_number": "Phone Number",
     "role_job_title": "Role/Job Title",
+    "service_title": "Service",
     "id": "ID"
   },
   "languages": {
@@ -26,8 +27,8 @@
   },
   "notifications": {
     "notifications": "Notifications",
-    "no_notifications": "  No Notifications Yet",
-    "check_back": "  Check back later for FPS and TAG updates, system alerts, and announcements."
+    "no_notifications": "No Notifications Yet",
+    "check_back": "Check back later for FPS and TAG updates, system alerts, and announcements."
   },
   "imgagePicker": {
     "photo": "Photo",
@@ -379,7 +380,8 @@
   "tagsReporting": {
     "headerTitle": "Anomaly Reporting (Tags)",
     "searchPlaceholder": "Search tags...",
-    "noTags": "No Tags Found",
+    "no_tags": "No Tags Available",
+    "check_back_tags": "Check back later for tasks, deadlines, zone activity, and machine-related tags.",
     "filter": {
       "title": "Filter",
       "close": "Close",
