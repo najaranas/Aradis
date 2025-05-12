@@ -62,12 +62,6 @@
           "sounds": ["./assets/sounds/notification_sound.wav"],
           "enableBackgroundRemoteNotifications": false
         }
-      ],
-      [
-        "expo-secure-store",
-        {
-          "configureAndroidBackup": true
-        }
       ]
     ],
     "owner": "anasnajar"

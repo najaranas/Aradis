@@ -101,8 +101,8 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
       cardData?.category === "open"
         ? 1
         : cardData?.category === "In progress"
-        ? 2
-        : 3,
+          ? 2
+          : 3,
     data: [
       { label: "Open", id: 1 },
       { label: "In Progress", id: 2 },
@@ -117,7 +117,7 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
         break;
 
       case "production":
-        setCategoryColor({ color: "#0000FF", bgColor: "#0070C030" });
+        setCategoryColor({ color: "#0777e7", bgColor: "#0070C030" });
         break;
 
       case "maintenance":

@@ -84,5 +84,8 @@ yarn-error.*
 # testing
 /coverage
 
-# Private Key
-aradis-2e974-firebase-adminsdk-fbsvc-29e78d5a3e
+# Firebase admin SDK service account file
+aradis-2e974-firebase-adminsdk-fbsvc-29e78d5a3e.json
+
+# Firebase config
+google-services.json

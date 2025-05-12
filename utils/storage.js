@@ -5,7 +5,6 @@
 //
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as SecureStore from "expo-secure-store";
 
 // ------------------ AsyncStorage (General Storage) ------------------
 
@@ -99,48 +98,3 @@ export const getAllStorageKeys = async () => {
 };
 
 // ------------------ SecureStore (Generic Secure Token Functions) ------------------
-
-/**
- * Stores a secure token under the given key.
- * @param {string} key - A unique key (e.g., "authToken", "notificationToken").
- * @param {string} value - The token value to securely store.
- * @returns {Promise<boolean>} True if successful.
- */
-export const saveSecureToken = async (key, value) => {
-  try {
-    await SecureStore.setItemAsync(key, value);
-    return true;
-  } catch (error) {
-    console.error(`Error saving secure token "${key}":`, error);
-    return false;
-  }
-};
-
-/**
- * Retrieves a secure token by key.
- * @param {string} key - The token key (e.g., "authToken", "notificationToken").
- * @returns {Promise<string|null>} The stored token or null if not found.
- */
-export const getSecureToken = async (key) => {
-  try {
-    return await SecureStore.getItemAsync(key);
-  } catch (error) {
-    console.error(`Error retrieving secure token "${key}":`, error);
-    return null;
-  }
-};
-
-/**
- * Deletes a secure token by key.
- * @param {string} key - The token key (e.g., "authToken", "notificationToken").
- * @returns {Promise<boolean>} True if successful.
- */
-export const deleteSecureToken = async (key) => {
-  try {
-    await SecureStore.deleteItemAsync(key);
-    return true;
-  } catch (error) {
-    console.error(`Error deleting secure token "${key}":`, error);
-    return false;
-  }
-};

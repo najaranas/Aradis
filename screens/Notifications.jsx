@@ -36,7 +36,7 @@ export default function Notifications() {
 
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState("");
   const { userData } = useUser();
 

@@ -222,7 +222,7 @@ export const TAGFILTERDATA = {
       },
       {
         name: "production",
-        color: "#0000FF",
+        color: "#0777e7",
         bgColor: "#0070C030",
         id: 2,
       },

@@ -37,15 +37,15 @@ import {
 import { removeNotificationToken } from "../utils/api/logoutApi";
 import { useTheme } from "../hooks/useTheme";
 import { useUser } from "../hooks/useUser";
+import { BarIndicator } from "react-native-indicators";
 
 export default function Profile() {
   const { theme, toggleTheme } = useTheme();
-
+  const [isLogOutLoading, setIsLogOutLoading] = useState(false);
   const [popupVisible, setPopupVisible] = useState(false);
   const [isSwitchEnabled, setIsSwitchEnabled] = useState(
     theme.name === "light" ? false : true
   );
-  const [isImgLoading, setIsImgLoading] = useState(false);
 
   const { t, i18n } = useTranslation();
   const isRTL = I18nManager.isRTL || i18n.language === "ar";
@@ -92,21 +92,21 @@ export default function Profile() {
    */
   const confirmLogoutHandler = async () => {
     try {
+      setIsLogOutLoading(true);
       const token = await getStoredValue("token");
       const notificationToken = await getStoredValue("notificationToken");
-      console.log("userData", userData?.id);
-      console.log("notificationToken", notificationToken);
-      console.log("token", token);
+
       await removeNotificationToken(notificationToken, userData?.id, token);
       removeStoredValue("token");
       removeStoredValue("data");
       clearUserData();
     } catch (error) {
       console.log("Error in deleting token", error);
+    } finally {
+      setIsLogOutLoading(false);
     }
 
     setPopupVisible(false);
-
     navigation.reset({ index: 0, routes: [{ name: "Login" }] });
   };
 
@@ -198,7 +198,6 @@ export default function Profile() {
           img={userData.image || workerMan}
           name={`${userData?.firstName} ${userData?.lastName}`}
           id={userData?.mat}
-          isImgLoading={isImgLoading}
           theme={theme}
         />
       </View>
@@ -325,29 +324,58 @@ export default function Profile() {
                 {t("profile.logout_confirmation")}
               </Text>
               <View style={styles.popupButtonContainer}>
-                <MyButton pressHandler={() => cancelLogoutHandler()}>
-                  <Text
+                <MyButton
+                  pressHandler={() => cancelLogoutHandler()}
+                  parentStyle={{ flex: 1, flexGrow: 1 }}>
+                  <View
                     style={[
-                      styles.popupButton,
-                      {
-                        backgroundColor: COLORS.lightGray,
-                        color: COLORS.darkGray,
-                      },
+                      styles.button,
+                      { backgroundColor: COLORS.lightGray },
                     ]}>
-                    {t("profile.keep_logged_in")}
-                  </Text>
+                    <Text
+                      style={[
+                        styles.popupButton,
+                        {
+                          color: COLORS.darkGray,
+                          textAlign: "center",
+                        },
+                      ]}>
+                      {t("profile.keep_logged_in")}
+                    </Text>
+                  </View>
                 </MyButton>
-                <MyButton pressHandler={() => confirmLogoutHandler()}>
-                  <Text
+                <MyButton
+                  pressHandler={() => confirmLogoutHandler()}
+                  parentStyle={{ flex: 1, flexGrow: 1 }}
+                  disabled={isLogOutLoading}>
+                  <View
                     style={[
-                      styles.popupButton,
+                      styles.button,
                       {
                         backgroundColor: theme.error,
-                        color: theme.white,
+                        opacity: isLogOutLoading ? 0.5 : 1,
                       },
                     ]}>
-                    {t("profile.confirm_logout")}
-                  </Text>
+                    {isLogOutLoading ? (
+                      <BarIndicator
+                        color={COLORS.white}
+                        count={4}
+                        size={1.4 * SIZES.medium}
+                        animationDuration={3000}
+                      />
+                    ) : (
+                      <Text
+                        style={[
+                          styles.popupButton,
+                          {
+                            color: theme.white,
+                            textAlign: "center",
+                          },
+                        ]}>
+                        {t("profile.confirm_logout")}
+                      </Text>
+                    )}
+                  </View>
                 </MyButton>
               </View>
             </View>
@@ -359,6 +387,15 @@ export default function Profile() {
 }
 
 const styles = StyleSheet.create({
+  button: {
+    gap: SIZES.small,
+    padding: SIZES.medium,
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    minHeight: SIZES.xLarge,
+    borderRadius: 10,
+  },
   container: {
     gap: SIZES.medium,
   },
@@ -429,8 +466,8 @@ const styles = StyleSheet.create({
     gap: SIZES.small,
   },
   popupButton: {
-    padding: SIZES.medium,
-    borderRadius: 10,
+    // padding: SIZES.medium,
+    // borderRadius: 10,
     fontFamily: FONTS.bold,
   },
 

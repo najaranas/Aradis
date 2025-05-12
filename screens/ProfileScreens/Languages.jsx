@@ -27,6 +27,7 @@ import * as Updates from "expo-updates";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { PulseIndicator } from "react-native-indicators";
+import { storeValue } from "../../utils/storage";
 
 export default function Languages({ navigation }) {
   const { t, i18n } = useTranslation();
@@ -49,14 +50,6 @@ export default function Languages({ navigation }) {
     Updates.reloadAsync();
   };
 
-  const storeLanguage = async (value) => {
-    try {
-      await AsyncStorage.setItem("lang", value);
-    } catch (error) {
-      console.error("Error Saving language:", error);
-    }
-  };
-
   const changeLanguage = async (lng) => {
     i18n.changeLanguage(lng);
 
@@ -66,9 +59,9 @@ export default function Languages({ navigation }) {
     } else {
       I18nManager.forceRTL(false);
     }
+    console.log("Language changed to:", lng);
     await storeValue("lang", lng);
   };
-
   const BackHandler = () => {
     navigation.goBack();
   };

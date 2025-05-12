@@ -6,7 +6,7 @@
 //
 
 import { StyleSheet, SafeAreaView } from "react-native";
-import React, { useEffect, useLayoutEffect } from "react";
+import { useEffect } from "react";
 import { COLORS, SIZES } from "../constants/theme";
 import { useNavigation } from "@react-navigation/native";
 import CheckInternet from "../components/handlers/CheckInternet";
@@ -20,7 +20,7 @@ import { useUser } from "../hooks/useUser";
 
 export default function Loading() {
   const navigation = useNavigation();
-  const { theme, toggleTheme } = useTheme();
+  const { setTheme } = useTheme();
   const { saveUserData } = useUser();
 
   /**
@@ -28,9 +28,9 @@ export default function Loading() {
    * If no value is found, it defaults to the current theme.
    */
   const fetchThemeValue = async () => {
-    const storedTheme = await getStoredValue("theme", theme);
+    const storedTheme = await getStoredValue("theme", "LIGHT");
     console.log("Stored theme:", storedTheme);
-    toggleTheme(storedTheme);
+    setTheme(storedTheme);
   };
 
   /**
@@ -46,6 +46,7 @@ export default function Loading() {
         const userData = await getStoredValue("data", {});
         console.log(userData);
         saveUserData(JSON.parse(userData));
+
         navigation.reset({
           index: 0,
           routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
@@ -68,9 +69,9 @@ export default function Loading() {
       await NavigationBar.setButtonStyleAsync("light");
     });
 
-    fetchisLoggedIn();
-
     fetchThemeValue();
+
+    fetchisLoggedIn();
   }, []);
 
   return (

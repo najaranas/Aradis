@@ -1,24 +1,14 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { getStoredValue } from "./utils/storage";
 
 // Import language files
 import enTranslation from "./translations/en.json";
 import frTranslation from "./translations/fr.json";
 import arTranslation from "./translations/ar.json";
 
-const getStoredLanguage = async () => {
-  try {
-    const value = await AsyncStorage.getItem("lang");
-    return value || "fr"; // Default to French if no language is stored
-  } catch (error) {
-    console.error("Error Reading language:", error);
-    return "fr";
-  }
-};
-
 const initializeI18next = async () => {
-  const language = await getStoredLanguage();
+  const language = (await getStoredValue("lang")) || "fr";
 
   i18next.use(initReactI18next).init({
     resources: {

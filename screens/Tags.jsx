@@ -343,9 +343,6 @@ export default function Tags({}) {
     return priorityScore;
   };
 
-  console.log("selectedFilters");
-  console.log(selectedFilters);
-
   /**
    * Filters tags based on selected filter criteria
    * Applies category, priority, status, and search filters
@@ -508,49 +505,6 @@ export default function Tags({}) {
           </ScrollView>
         )}
       </View>
-      {/* <View style={{ flex: 1 }}>
-        {tags.length ? (
-          <FlashList
-            ref={listRef}
-            data={tags}
-            keyExtractor={(item, index) => index.toString()}
-            showsVerticalScrollIndicator={false}
-            ItemSeparatorComponent={() => (
-              <View style={{ height: SIZES.medium }} />
-            )}
-            contentContainerStyle={styles.tagsContentContainer}
-            estimatedItemSize={200}
-            renderItem={({ item, index }) => {
-              console.log(item);
-              return (
-                <Card
-                  cardData={item}
-                  preventData={[
-                    "deadline",
-                    "actions",
-                    "images",
-                    "machine",
-                    "equipment",
-                  ]}
-                />
-              );
-            }}
-          />
-        ) : (
-          // No data Found
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ height: "100%" }}>
-              <Text
-                style={{
-                  ...styles.noDataFound,
-                  color: theme.gray,
-                }}>
-                {t("tagsReporting.noTags")}
-              </Text>
-            </View>
-          </TouchableWithoutFeedback>
-        )}
-      </View> */}
 
       {/* Filter */}
 
@@ -969,7 +923,7 @@ const styles = StyleSheet.create({
 
   modalContainer: {
     padding: SIZES.small,
-    gap: SIZES.large,
+    gap: 0.8 * SIZES.large,
   },
 
   filterHeader: {
@@ -999,11 +953,10 @@ const styles = StyleSheet.create({
 
   customHandle: {
     width: SIZES.xLarge,
-    height: 0.5 * SIZES.small,
+    height: 0.4 * SIZES.small,
     backgroundColor: COLORS.lightGray,
     borderRadius: 3,
     alignSelf: "center",
-    marginBottom: 10,
   },
 
   tabBar: {
