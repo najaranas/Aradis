@@ -6,15 +6,13 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import { useTheme } from "../hooks/useTheme";
 import { ADDTAGDETAILS } from "../constants/data";
 import PagerView from "react-native-pager-view";
-
 import { BlurView } from "expo-blur";
 import Animated, { useSharedValue } from "react-native-reanimated";
-
 import { Image } from "expo-image";
 import CustomToast from "./CustomToast";
 import AddTaskActionButtons from "./AddTaskActionButtons";
@@ -26,256 +24,250 @@ import { getStoredValue } from "../utils/storage";
 
 const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
 
-let initialTagForm = {};
-ADDTAGDETAILS.forEach(({ fields }) => {
-  fields.forEach(({ type, selectType }) => {
-    if (type === "image") {
-      initialTagForm[selectType] = Array.from({ length: 4 }, (_, i) => ({
-        id: (i + 1).toString(),
-        selectedImg: null,
-      }));
-    } else if (type === "date" || type === "time" || type === "datetime") {
-      initialTagForm[selectType] = new Date();
-    } else {
-      initialTagForm[selectType] = null;
-    }
+// Create initialTagForm outside component to avoid recreation on every render
+const buildInitialTagForm = () => {
+  const initialForm = {};
+  ADDTAGDETAILS.forEach(({ fields }) => {
+    fields.forEach(({ type, selectType }) => {
+      if (type === "image") {
+        initialForm[selectType] = Array.from({ length: 4 }, (_, i) => ({
+          id: (i + 1).toString(),
+          selectedImg: null,
+        }));
+      } else if (type === "date" || type === "time" || type === "datetime") {
+        initialForm[selectType] = new Date();
+      } else {
+        initialForm[selectType] = null;
+      }
+    });
   });
-});
+  return initialForm;
+};
 
 export default function AddTag() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { theme } = useTheme();
 
-  //
-  const [progress, setProgress] = useState(1 / ADDTAGDETAILS?.length);
+  // Lazy initialization of formData using a function
+  const [formData, setFormData] = useState(() => buildInitialTagForm());
+  const [progress, setProgress] = useState(1 / ADDTAGDETAILS.length);
   const [activeFormPage, setActiveFormPage] = useState(0);
-
   const [modalVisible, setModalVisible] = useState(false);
 
+  // Initialize refs lazily
   const pagerViewRef = useRef(null);
   const imgFlatlistRef = useRef(null);
   const pageFlatlistRef = useRef([]);
 
   const translateY = useSharedValue(SIZES.xLarge);
-  const [formData, setFormData] = useState(initialTagForm);
 
-  console.log(formData);
   const [toast, setToast] = useState({
     show: false,
     message: "",
     type: "",
   });
 
-  /**
-   * Check if value is empty or not
-   * @param {any} val
-   * @returns {boolean} Returns `true` if the value is empty, otherwise `false`.
-   */
-  const isEmpty = (val) => {
+  // Use memo for validation functions to avoid recreating them on every render
+  const isEmpty = useCallback((val) => {
     return (
       val === null ||
       val === undefined ||
       val.length === 0 ||
       val.toString().trim() === ""
     );
-  };
+  }, []);
 
-  /**
-   * Validates the input value based on the specified field type.
-   * Displays an error message if validation fails.
-   *
-   * @param {any} value - The value to be validated.
-   * @param {string} fieldType - The type of the field being validated.
-   * @returns {boolean} - Returns `true` if the value is valid, otherwise `false`.
-   */
-  const errorHandling = (value, fieldType) => {
-    switch (fieldType) {
-      case "tagNumber":
-        const tagNumberPattern = /^#TAG-\d+$/;
-        if (isEmpty(value) || !tagNumberPattern.test(value)) {
-          return {
-            isValid: false,
-            message: "Please enter a valid tag number (e.g., #TAG-123456).",
-          };
-        }
-        return { isValid: true };
+  const errorHandling = useCallback(
+    (value, fieldType) => {
+      switch (fieldType) {
+        case "tagNumber":
+          const tagNumberPattern = /^#TAG-\d+$/;
+          if (isEmpty(value) || !tagNumberPattern.test(value)) {
+            return {
+              isValid: false,
+              message: "Please enter a valid tag number (e.g., #TAG-123456).",
+            };
+          }
+          return { isValid: true };
 
-      case "category":
-        if (isEmpty(value)) {
-          return {
-            isValid: false,
-            message: "Please select a valid category.",
-          };
-        }
-        return { isValid: true };
+        case "category":
+          if (isEmpty(value)) {
+            return {
+              isValid: false,
+              message: "Please select a valid category.",
+            };
+          }
+          return { isValid: true };
 
-      case "description":
-        if (isEmpty(value) || value.toString().trim().length < 10) {
-          return {
-            isValid: false,
-            message: "Description must be at least 10 characters long.",
-          };
-        }
-        return { isValid: true };
+        case "description":
+          if (isEmpty(value) || value.toString().trim().length < 10) {
+            return {
+              isValid: false,
+              message: "Description must be at least 10 characters long.",
+            };
+          }
+          return { isValid: true };
 
-      case "images":
-        if (!Array.isArray(value) || !value.some((img) => img.selectedImg)) {
-          return {
-            isValid: false,
-            message: "Please upload at least one image of the anomaly.",
-          };
-        }
-        return { isValid: true };
+        case "images":
+          if (!Array.isArray(value) || !value.some((img) => img.selectedImg)) {
+            return {
+              isValid: false,
+              message: "Please upload at least one image of the anomaly.",
+            };
+          }
+          return { isValid: true };
 
-      case "zone":
-        const zonePattern = /^[A-Za-z]$/;
+        case "zone":
+          const zonePattern = /^[A-Za-z]$/;
 
-        if (isEmpty(value) || !zonePattern.test(value)) {
-          return {
-            isValid: false,
-            message: "Please enter a valid zone (e.g., Zone A).",
-          };
-        }
-        return { isValid: true };
+          if (isEmpty(value) || !zonePattern.test(value)) {
+            return {
+              isValid: false,
+              message: "Please enter a valid zone (e.g., Zone A).",
+            };
+          }
+          return { isValid: true };
 
-      case "machine":
-        const machinePattern = /^[1-9]\d*$/;
-        if (isEmpty(value) || !machinePattern.test(value)) {
-          return {
-            isValid: false,
-            message: "Please enter a valid machine name (e.g., Machine 5).",
-          };
-        }
-        return { isValid: true };
+        case "machine":
+          const machinePattern = /^[1-9]\d*$/;
+          if (isEmpty(value) || !machinePattern.test(value)) {
+            return {
+              isValid: false,
+              message: "Please enter a valid machine name (e.g., Machine 5).",
+            };
+          }
+          return { isValid: true };
 
-      case "equipment":
-      case "priority":
-      case "status":
-      case "foundBy":
-        if (isEmpty(value)) {
-          return {
-            isValid: false,
-            message: `Please enter a valid ${fieldType}.`,
-          };
-        }
-        return { isValid: true };
+        case "equipment":
+        case "priority":
+        case "status":
+        case "foundBy":
+          if (isEmpty(value)) {
+            return {
+              isValid: false,
+              message: `Please enter a valid ${fieldType}.`,
+            };
+          }
+          return { isValid: true };
 
-      case "responsiblePerson":
-        if (isEmpty(value)) {
-          return {
-            isValid: false,
-            message:
-              "Please select the person(s) responsible for resolving the anomaly.",
-          };
-        }
-        return { isValid: true };
+        case "responsiblePerson":
+          if (isEmpty(value)) {
+            return {
+              isValid: false,
+              message:
+                "Please select the person(s) responsible for resolving the anomaly.",
+            };
+          }
+          return { isValid: true };
 
-      case "actions":
-        if (isEmpty(value) || value.toString().trim().length < 10) {
-          return {
-            isValid: false,
-            message:
-              "Please describe the actions to be taken (minimum 10 characters).",
-          };
-        }
-        return { isValid: true };
+        case "actions":
+          if (isEmpty(value) || value.toString().trim().length < 10) {
+            return {
+              isValid: false,
+              message:
+                "Please describe the actions to be taken (minimum 10 characters).",
+            };
+          }
+          return { isValid: true };
 
-      case "deadline":
-        const todayDate = new Date();
-        const pickedDate = new Date(value);
-        if (
-          isEmpty(value) ||
-          isNaN(pickedDate.getTime()) ||
-          pickedDate <= todayDate
-        ) {
-          return {
-            isValid: false,
-            message:
-              "Please select a valid deadline date (must be in the future).",
-          };
-        }
-        return { isValid: true };
+        case "deadline":
+          const todayDate = new Date();
+          const pickedDate = new Date(value);
+          if (
+            isEmpty(value) ||
+            isNaN(pickedDate.getTime()) ||
+            pickedDate <= todayDate
+          ) {
+            return {
+              isValid: false,
+              message:
+                "Please select a valid deadline date (must be in the future).",
+            };
+          }
+          return { isValid: true };
 
-      default:
-        return { isValid: true };
-    }
-  };
+        default:
+          return { isValid: true };
+      }
+    },
+    [isEmpty]
+  );
 
-  const onModalRequestClose = () => {
+  const onModalRequestClose = useCallback(() => {
     setModalVisible(false);
     resetPageViewer();
-  };
+  }, []);
 
   /**
    * Handles the "Continue" button click.
    * Moves to the Next form page after the Validation
    */
-  const handleContinueBtn = () => {
-    const hasError = ADDTAGDETAILS[activeFormPage]["fields"].some(
-      (fielName) => {
-        const validationResult = errorHandling(
-          formData[fielName?.selectType],
-          fielName?.selectType
-        );
+  const handleContinueBtn = useCallback(() => {
+    const activeFields = ADDTAGDETAILS[activeFormPage]["fields"];
+    let hasError = false;
 
-        if (!validationResult.isValid) {
-          setToast({
-            show: true,
-            message: t(`addTagDetailsErrors.${fielName?.selectType}`),
-            type: "error",
-          });
-        }
-        // if (!validationResult.isValid) {
-        //   // setToastMessage(validationResult.message);
-        //   setToastMessage(t(`addTagDetailsErrors.${fielName?.selectType}`));
-        //   setToastType("error");
-        //   setShowToast(true);
-        // }
+    // Optimize validation to exit early
+    for (let i = 0; i < activeFields.length; i++) {
+      const fielName = activeFields[i];
+      const validationResult = errorHandling(
+        formData[fielName?.selectType],
+        fielName?.selectType
+      );
 
-        return !validationResult.isValid;
+      if (!validationResult.isValid) {
+        setToast({
+          show: true,
+          message: t(`addTagDetailsErrors.${fielName?.selectType}`),
+          type: "error",
+        });
+        hasError = true;
+        break;
       }
-    );
+    }
 
     if (hasError) {
       return;
     }
 
-    if (activeFormPage === ADDTAGDETAILS?.length - 1) {
+    if (activeFormPage === ADDTAGDETAILS.length - 1) {
       handleFinishBtn();
       return;
     }
 
     const nextPage = activeFormPage + 1;
     setActiveFormPage(nextPage);
-    pagerViewRef.current?.setPage(nextPage);
+    if (pagerViewRef.current) {
+      pagerViewRef.current.setPage(nextPage);
+    }
 
-    setProgress((oldValue) => oldValue + 1 / ADDTAGDETAILS?.length);
-  };
+    setProgress((oldValue) => oldValue + 1 / ADDTAGDETAILS.length);
+  }, [activeFormPage, errorHandling, formData, , t]);
 
   /**
    * Handles the "Back" button click.
    * Moves to the previous form page.
    */
-  const handleBackBtn = () => {
+  const handleBackBtn = useCallback(() => {
     if (activeFormPage === 0) return; // Disable back button on the first page
 
     const prevPage = activeFormPage - 1;
     setActiveFormPage(prevPage);
-    pagerViewRef.current?.setPage(prevPage);
+    if (pagerViewRef.current) {
+      pagerViewRef.current.setPage(prevPage);
+    }
 
-    setProgress((oldValue) => oldValue - 1 / ADDTAGDETAILS?.length);
-  };
+    setProgress((oldValue) => oldValue - 1 / ADDTAGDETAILS.length);
+  }, [activeFormPage]);
 
   /**
    * Handles the "Finish" button click.
    */
-  const handleFinishBtn = () => {
+  const handleFinishBtn = useCallback(() => {
     setModalVisible(true);
+    sendDataToServer();
+  }, [formData]);
 
-    fetchData();
-  };
-
-  const fetchData = async () => {
+  const sendDataToServer = useCallback(async () => {
     try {
       const formDataToSend = new FormData();
       const tagId = generateId("TAG");
@@ -288,7 +280,7 @@ export default function AddTag() {
       formDataToSend.append("priority", formData?.priority?.type);
 
       // Add only the first image
-      if (formData?.images[0]?.selectedImg) {
+      if (formData?.images?.[0]?.selectedImg) {
         formDataToSend.append("image", {
           uri: formData.images[0].selectedImg,
           name: "image1.jpg",
@@ -297,7 +289,7 @@ export default function AddTag() {
       }
 
       // Add multiple images if needed
-      formData?.images.forEach((item, index) => {
+      formData?.images?.forEach((item, index) => {
         if (item.selectedImg) {
           formDataToSend.append("images", {
             uri: item.selectedImg,
@@ -321,29 +313,36 @@ export default function AddTag() {
         }
       );
       console.log(res.json());
-      console.log(await res.json());
     } catch (error) {
       console.log(error);
     }
-  };
+  }, [formData]);
 
   /**
    * Reset the Form and Clear all the input
    * Scroll to the top of the page
    */
-  const resetPageViewer = () => {
-    setFormData(initialTagForm);
-    pagerViewRef.current.setPage(0);
+  const resetPageViewer = useCallback(() => {
+    setFormData(buildInitialTagForm());
+    if (pagerViewRef.current) {
+      pagerViewRef.current.setPage(0);
+    }
     setActiveFormPage(0);
-    setProgress(1 / ADDTAGDETAILS?.length);
-    imgFlatlistRef?.current?.scrollToOffset({ offset: 0 });
-    pageFlatlistRef?.current?.forEach((item) => {
-      if (!item) return;
-      item.scrollToOffset({
-        offset: 0,
+    setProgress(1 / ADDTAGDETAILS.length);
+
+    if (imgFlatlistRef?.current) {
+      imgFlatlistRef.current.scrollToOffset({ offset: 0 });
+    }
+
+    if (pageFlatlistRef?.current) {
+      pageFlatlistRef.current.forEach((item) => {
+        if (!item) return;
+        item.scrollToOffset({
+          offset: 0,
+        });
       });
-    });
-  };
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -365,7 +364,7 @@ export default function AddTag() {
         nextStep={t(
           `addTagDetails.sections.${activeFormPage + 1}.nextPageTitle`
         )}
-        formatText={`${activeFormPage + 1} / ${ADDTAGDETAILS?.length}`}
+        formatText={`${activeFormPage + 1} / ${ADDTAGDETAILS.length}`}
       />
 
       <View style={styles.content}>
@@ -375,7 +374,7 @@ export default function AddTag() {
           style={styles.pagerView}
           pageMargin={SIZES.medium}
           initialPage={activeFormPage}>
-          {ADDTAGDETAILS?.map((pageItem, pageIndex) => (
+          {ADDTAGDETAILS.map((pageItem, pageIndex) => (
             <View style={styles.page} key={(pageIndex + 1).toString()}>
               <AddTaskForm
                 setFormData={setFormData}
@@ -395,7 +394,7 @@ export default function AddTag() {
         </PagerView>
 
         <AddTaskActionButtons
-          lastPage={activeFormPage + 1 === ADDTAGDETAILS?.length}
+          lastPage={activeFormPage + 1 === ADDTAGDETAILS.length}
           disabled={activeFormPage === 0}
           styles={actionButtonsStyles}
           handleBackBtn={handleBackBtn}
@@ -406,22 +405,18 @@ export default function AddTag() {
         />
       </View>
 
-      {/* Success Modal  */}
-      <View>
+      {/* Success Modal - Only render when visible */}
+      {modalVisible && (
         <Modal
           animationType="slide"
           transparent
           statusBarTranslucent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            onModalRequestClose();
-          }}>
+          onRequestClose={onModalRequestClose}>
           <View style={styles.modalOverlay}>
             <Pressable
               style={styles.backdropPressable}
-              onPress={() => {
-                onModalRequestClose();
-              }}>
+              onPress={onModalRequestClose}>
               <View style={styles.modalContainer}>
                 <Pressable>
                   <View
@@ -439,10 +434,7 @@ export default function AddTag() {
                     </Text>
 
                     <TouchableOpacity
-                      onPress={() => {
-                        setModalVisible(false);
-                        resetPageViewer();
-                      }}
+                      onPress={onModalRequestClose}
                       style={styles.closeButton}>
                       <Text style={styles.closeText}>
                         {t("addTagDetails.close")}
@@ -456,7 +448,7 @@ export default function AddTag() {
             </Pressable>
           </View>
         </Modal>
-      </View>
+      )}
     </View>
   );
 }
@@ -466,10 +458,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 1.5 * SIZES.medium,
-    paddingBottom: 0,
     gap: SIZES.medium,
   },
-
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   // Keyboard Avoiding View Styles
   keyboardAvoidingView: {
     flex: 1,

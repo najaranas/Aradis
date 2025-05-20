@@ -2,6 +2,7 @@ import usa from "../assets/images/languages/usa.png";
 import tunisia from "../assets/images/languages/tunisia.png";
 import france from "../assets/images/languages/france.png";
 import { tagIcon } from "./dataImage";
+import { actionIcon } from "./dataImage";
 
 const months = [
   "Jan",
@@ -253,7 +254,7 @@ export const TAGFILTERDATA = {
         id: 2,
       },
       {
-        name: "T_Urgent",
+        name: "T.Urgent",
         id: 3,
       },
     ],
@@ -1826,10 +1827,16 @@ export const HOMEDATA = [
   },
   {
     id: 2,
-    icon: tagIcon,
+    icon: actionIcon,
     title: "My Actions",
     subTitle: "20 new actions added",
     navigation: "",
   },
-  { id: 3, icon: tagIcon, title: "Audit", subTitle: "Audit", navigation: "" },
+  {
+    id: 3,
+    icon: tagIcon,
+    title: "Audit",
+    subTitle: "Audit",
+    navigation: "",
+  },
 ];

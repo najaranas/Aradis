@@ -13,7 +13,7 @@ export const removeNotificationToken = async (token, userId, authToken) => {
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_BASE_URL}/auth/remove-device-token`,
       {
-        method: "POST",
+        method: "DELETE",
         headers: {
           "Content-Type": "application/json",
           Authorization: authToken,

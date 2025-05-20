@@ -123,30 +123,35 @@ export default function Login() {
         userFieldsData.password
       );
 
-      saveUserData(user?.data);
-
-      await storeValue("token", user?.token);
-      await storeValue("data", JSON.stringify(user?.data));
-
-      const notificationToken = await getStoredValue("notificationToken");
-
-      console.log("Notification Token:", notificationToken);
-      console.log("User ID:", user?.id);
-      console.log("User Token:", user?.token);
-      console.log("User Data:", user);
-
-      if (notificationToken) {
-        await registerNotificationToken(
-          notificationToken,
-          user?.data?.id,
-          user?.token
-        );
+      console.log(user?.data);
+      if (
+        user?.data?.role === "user" &&
+        user?.data?.userCategory === "operational"
+      ) {
+        saveUserData(user?.data);
+        await storeValue("token", user?.token);
+        await storeValue("data", JSON.stringify(user?.data));
+        const notificationToken = await getStoredValue("notificationToken");
+        console.log("Notification Token:", notificationToken);
+        console.log("User data", user);
+        if (notificationToken) {
+          await registerNotificationToken(
+            notificationToken,
+            user?.data?.id,
+            user?.token
+          );
+        }
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
+        });
+      } else {
+        setToast({
+          message: t("login.access_denied"),
+          type: "error",
+          show: true,
+        });
       }
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "TabNavigator", params: { screen: "Home" } }],
-      });
     } catch (error) {
       setToast({
         message: error.message || t("login.connection_error"),

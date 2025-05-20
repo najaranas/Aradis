@@ -8,7 +8,13 @@ import workerWomen from "../assets/images/worker-women.png";
 import silentNotification from "../assets/icons/silent.png";
 import noTagsImage from "../assets/icons/no-tags.png";
 import tagIcon from "../assets/icons/tag.png";
+import actionIcon from "../assets/icons/action-icon.png";
 import check from "../assets/icons/check.png";
+import productionIcon from "../assets/icons/production.png";
+import maintenanceIcon from "../assets/icons/maintenance.png";
+import securityIcon from "../assets/icons/security.png";
+import qualityIcon from "../assets/icons/quality.png";
+import teamIcon from "../assets/icons/team.png";
 
 export {
   smallLogo,
@@ -20,5 +26,11 @@ export {
   silentNotification,
   noTagsImage,
   tagIcon,
+  actionIcon,
   check,
+  productionIcon,
+  maintenanceIcon,
+  securityIcon,
+  qualityIcon,
+  teamIcon,
 };

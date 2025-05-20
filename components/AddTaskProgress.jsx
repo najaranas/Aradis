@@ -43,7 +43,8 @@ export default function AddTaskProgress({
           progress={progress}
           thickness={5}
           color={COLORS.primary}
-          unfilledColor="#f0eeee"
+          unfilledColor={theme.lightGray}
+          // unfilledColor="#f0eeee"
           borderWidth={0}
           showsText={true}
           formatText={() => formatText}

@@ -203,7 +203,7 @@ export default function MyProfile({ navigation }) {
                   opacity: isdataChanged ? 1 : 0.3,
                   color: isdataChanged ? COLORS.white : COLORS.black,
                 }}>
-                Save
+                {t("myProfile.save")}
               </Text>
             </MyButton>
           </TopTabPage>

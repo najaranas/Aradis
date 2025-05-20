@@ -7,7 +7,6 @@
 //
 
 import {
-  Button,
   FlatList,
   I18nManager,
   Modal,
@@ -20,7 +19,7 @@ import { useEffect, useState } from "react";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import TopTabPage from "../components/TopTabPage";
 import ProfilePictureData from "../components/ProfilePictureData";
-import { COLORS, FONTS, SIZES, THEME } from "../constants/theme";
+import { COLORS, FONTS, SIZES } from "../constants/theme";
 import { workerMan } from "../constants/dataImage";
 import { LANGUAGES, PROFILEMENUDATA } from "../constants/data";
 import MyButton from "../components/MyButton";
@@ -46,7 +45,6 @@ export default function Profile() {
   const [isSwitchEnabled, setIsSwitchEnabled] = useState(
     theme.name === "light" ? false : true
   );
-
   const { t, i18n } = useTranslation();
   const isRTL = I18nManager.isRTL || i18n.language === "ar";
   const insets = useSafeAreaInsets();
@@ -96,7 +94,14 @@ export default function Profile() {
       const token = await getStoredValue("token");
       const notificationToken = await getStoredValue("notificationToken");
 
-      await removeNotificationToken(notificationToken, userData?.id, token);
+      const res = await removeNotificationToken(
+        notificationToken,
+        userData?.id,
+        token
+      );
+      navigation.reset({ index: 0, routes: [{ name: "Login" }] });
+      setPopupVisible(false);
+      console.log("Notification token removed successfully", res);
       removeStoredValue("token");
       removeStoredValue("data");
       clearUserData();
@@ -105,9 +110,6 @@ export default function Profile() {
     } finally {
       setIsLogOutLoading(false);
     }
-
-    setPopupVisible(false);
-    navigation.reset({ index: 0, routes: [{ name: "Login" }] });
   };
 
   /**

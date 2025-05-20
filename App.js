@@ -24,6 +24,7 @@ import Scanner from "./screens/Scanner";
 import ConfirmScan from "./screens/ConfirmScan";
 import { Provider } from "react-redux";
 import { store } from "./store/index";
+import NotificationSocketManager from "./utils/NotificationSocketManager";
 
 const Stack = createNativeStackNavigator();
 

@@ -1,46 +1,28 @@
-//
-// Notifications.jsx
-// This component is responsible for displaying  notifications to the user.
-// It uses React Native's FlatList to render a list of notifications.
-// It connects to a WebSocket to receive real-time updates for notifications.
-// It also includes a loading state and handles marking notifications as read.
-// It uses the useTranslation hook for internationalization and the useTheme hook for theming.
-//  It also includes a custom button component for handling button presses.
-//
-
-import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { DotIndicator } from "react-native-indicators";
-
 import TopTabPage from "../components/TopTabPage";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import { useTheme } from "../hooks/useTheme";
 import { silentNotification } from "../constants/dataImage";
 import { useTranslation } from "react-i18next";
 import MyButton from "../components/MyButton";
-
+import { formatDate } from "date-fns";
+import { useNotifications } from "../hooks/useNotifications";
+import { markNotificationAsRead } from "../utils/api/notificationApi";
 import { getStoredValue } from "../utils/storage";
-import {
-  connectNotificationSocket,
-  markNotificationAsRead,
-} from "../utils/api/notificationApi";
-import { useUser } from "../hooks/useUser";
+import { useEffect, useState } from "react";
+import { FlashList } from "@shopify/flash-list";
 
 export default function Notifications() {
   const navigation = useNavigation();
   const { theme } = useTheme();
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
-
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const { notifications, unreadCount, setNotifications, setUnreadCount } =
+    useNotifications();
+  console.log("Notifications", notifications);
   const [token, setToken] = useState("");
-  const { userData } = useUser();
-
-  const userId = userData?.id;
 
   useEffect(() => {
     const readToken = async () => {
@@ -50,66 +32,53 @@ export default function Notifications() {
     readToken();
   }, []);
 
-  useEffect(() => {
-    if (!userId || !token) return;
-    setIsLoading(true);
-
-    const socket = connectNotificationSocket(
-      userId,
-      token,
-      (updated) => {
-        setNotifications(updated);
-        setIsLoading(false);
-      },
-      (count) => {
-        setUnreadCount(count);
-      }
-    );
-
-    return () => {
-      if (socket) socket.disconnect();
-    };
-  }, [userId, token]);
-
   const btnPressHandler = async (notif) => {
     navigation.navigate("Scanner");
 
     if (notif.status === "unread") {
       try {
-        const data = await markNotificationAsRead(token, notif.id);
+        await markNotificationAsRead(token, notif.id);
 
-        console.log(data);
-
-        // ✅ Update UI immediately
-        setNotifications((prev) =>
-          prev.map((n) => (n.id === notif.id ? { ...n, status: "read" } : n))
+        // With Redux, we need to create a new array based on current notifications
+        const updatedNotifications = notifications.map((n) =>
+          n.id === notif.id ? { ...n, status: "read" } : n
         );
 
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+        // Dispatch the updated notifications array to Redux
+        setNotifications(updatedNotifications);
+
+        // Update unread count directly
+        setUnreadCount(Math.max(0, unreadCount - 1));
       } catch (error) {
         console.error("Failed to mark notification as read:", error);
       }
     }
   };
 
-  const renderItem = ({ item }) => (
-    <MyButton pressHandler={() => btnPressHandler(item)}>
-      <View style={styles.notificationsCard}>
-        <View style={styles.cardHeader}>
-          <Text style={[styles.typeText, { color: theme.text }]}>
-            {item?.title}
-          </Text>
-          <Text style={styles.timeText}>{item?.formattedDate}</Text>
+  const renderItem = ({ item }) => {
+    return (
+      <MyButton pressHandler={() => btnPressHandler(item)}>
+        <View style={styles.notificationsCard}>
+          <View style={styles.cardHeader}>
+            <Text style={[styles.titleText, { color: theme.text }]}>
+              {item?.title}
+            </Text>
+            <Text style={styles.timeText}>
+              {formatDate(item?.createdAt, "dd-MM-yyyy : HH:mm")}
+            </Text>
+          </View>
+          <View style={styles.descriptionContainer}>
+            <Text style={[styles.description, { color: theme.text }]}>
+              {item?.message}
+            </Text>
+            {item?.status === "unread" && (
+              <View style={styles.unreadIndicator} />
+            )}
+          </View>
         </View>
-        <View style={styles.descriptionContainer}>
-          <Text style={[styles.description, { color: theme.text }]}>
-            {item?.message}
-          </Text>
-          {item?.status === "unread" && <View style={styles.unreadIndicator} />}
-        </View>
-      </View>
-    </MyButton>
-  );
+      </MyButton>
+    );
+  };
 
   const BackHandler = () => navigation.goBack();
 
@@ -120,18 +89,11 @@ export default function Notifications() {
         BackHandler={BackHandler}
       />
 
-      {isLoading ? (
-        <View style={styles.indicatorContainer}>
-          <DotIndicator
-            color={COLORS.secondary}
-            count={3}
-            size={SIZES.medium}
-          />
-        </View>
-      ) : notifications.length > 0 ? (
-        <FlatList
+      {notifications.length > 0 ? (
+        <FlashList
           data={notifications}
           renderItem={renderItem}
+          estimatedItemSize={125}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -163,8 +125,9 @@ const styles = StyleSheet.create({
   cardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
-  typeText: {
+  titleText: {
     fontFamily: FONTS.medium,
     fontSize: 1.1 * SIZES.medium,
   },
@@ -175,14 +138,17 @@ const styles = StyleSheet.create({
   descriptionContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    gap: SIZES.medium,
   },
   description: {
     fontSize: SIZES.medium,
     fontFamily: FONTS.regular,
-    flexShrink: 1,
+    flexGrow: 1,
     opacity: 0.7,
+    flexShrink: 1,
+    flexWrap: "wrap",
+    overflow: "hidden",
   },
-
   unreadIndicator: {
     backgroundColor: COLORS.blue,
     width: SIZES.small,
@@ -202,11 +168,6 @@ const styles = StyleSheet.create({
     paddingTop: 1.5 * SIZES.xLarge,
     alignItems: "center",
     gap: SIZES.small,
-  },
-  indicatorContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   noNotificationsTitle: {
     fontSize: SIZES.large,

@@ -7,47 +7,62 @@
 // It uses the useTranslation hook for internationalization and the useTheme hook for theming.
 //
 
-import { useEffect } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useCallback, useEffect, useState } from "react";
+import {
+  Button,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import { formatDate } from "date-fns";
 import { ar, fr, enUS } from "date-fns/locale";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from "@react-navigation/native";
 import { useTheme } from "../hooks/useTheme";
 import MyButton from "../components/MyButton";
 import { useTranslation } from "react-i18next";
 import { Image } from "expo-image";
 import { StatusBar } from "expo-status-bar";
-import { HOMEDATA, TAGS } from "../constants/data";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { getStoredValue } from "../utils/storage";
 import { useUser } from "../hooks/useUser";
+import { HOMEDATA, TAGS } from "../constants/data";
+import { useNotifications } from "../hooks/useNotifications";
+import { fetchStatsTags } from "../utils/api/tagApi";
+import { DotIndicator } from "react-native-indicators";
 
 export default function Home() {
+  const date = new Date();
   const { theme } = useTheme();
   const { t, i18n } = useTranslation();
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const isScreenFocused = useIsFocused();
   const { userData } = useUser();
+  const { unreadCount } = useNotifications();
 
-  const date = new Date();
+  const [isStatsLoading, setIsStatsLoading] = useState(false);
+  const [isStatsRefreshing, setIsStatsRefreshing] = useState(false);
+  const [tagsStats, setTagsStats] = useState([]);
+  console.log("userData:", userData);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const token = await getStoredValue("token");
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_BASE_URL}/notifications/${token}`,
-        {
-          headers: { Authorization: `${token}` },
-        }
-      );
-      const res = await response.json();
-      console.log(res);
-    };
-    fetchData();
+    fetchTagsStats();
   }, []);
+
+  const fetchTagsStats = async () => {
+    setIsStatsLoading(true);
+    const tagsStats = await fetchStatsTags();
+    setTagsStats(tagsStats);
+    setIsStatsLoading(false);
+  };
 
   const notifcationPressHandler = () => {
     navigation.navigate("Notifications");
@@ -60,6 +75,18 @@ export default function Home() {
   const cardPressHandler = (path) => {
     if (!path) return;
     navigation.navigate(path);
+  };
+
+  const formatStatsResult = (stat) => {
+    // Format the number to always show two digits
+
+    return stat?.toString().padStart(2, "0");
+  };
+
+  const onRefresh = async () => {
+    setIsStatsRefreshing(true);
+    await fetchTagsStats();
+    setIsStatsRefreshing(false);
   };
 
   return (
@@ -92,7 +119,7 @@ export default function Home() {
             <MyButton pressHandler={notifcationPressHandler}>
               <Ionicons name="notifications" style={styles.iconStyle} />
               {/* indicator */}
-              <View style={styles.notificationIndicator} />
+              {unreadCount > 0 && <View style={styles.notificationIndicator} />}
             </MyButton>
           </View>
         </View>
@@ -102,67 +129,98 @@ export default function Home() {
               i18n.language === "ar" ? ar : i18n.language === "fr" ? fr : enUS,
           })}
         </Text>
-
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>05</Text>
-            <Text style={styles.statLabel}>{t("home.tags_in_progress")}</Text>
-          </View>
-          <View style={styles.statItem}>
-            <View style={styles.statItemSeperator} />
-
-            <Text style={styles.statNumber}>15</Text>
-            <Text style={styles.statLabel}>{t("home.tags_completed")}</Text>
-          </View>
-        </View>
       </View>
 
+      {/* stats content  */}
       <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollViewContent}>
-        {HOMEDATA.map((item, index) => {
-          let subtitleText = "";
-          let navigate = null;
-
-          if (item.id === 1) {
-            subtitleText = `${TAGS?.length || 0} ${t("home.1.subtitle")}`;
-            navigate = "Tags";
-          } else if (item.id === 2) {
-            subtitleText = `${TAGS?.length || 0} ${t("home.2.subtitle")}`;
-            navigate = "Actions";
-          } else if (item.id === 3) {
-            subtitleText = `${t("home.3.subtitle")}`;
-          }
-
-          return (
-            <MyButton
-              key={index}
-              pressHandler={() => cardPressHandler(navigate)}>
-              <View
-                style={[
-                  styles.cardContainer,
-                  {
-                    backgroundColor: theme.background,
-                    flexGrow: 1,
-                  },
-                  theme.name === "dark" && styles.cardDark,
-                  theme.name === "light" && styles.cardLight,
-                ]}>
-                <View style={styles.cardIconContainer}>
-                  <Image source={item.icon} style={styles.cardIcon} />
-                </View>
-                <View style={styles.cardTextContainer}>
-                  <Text style={[styles.cardTitle, { color: theme.text }]}>
-                    {t(`home.${item.id}.title`)}
-                  </Text>
-
-                  <Text style={styles.cardSubtitle}>{subtitleText}</Text>
-                </View>
+        style={{ marginBottom: SIZES.medium }}
+        refreshControl={
+          <RefreshControl
+            refreshing={isStatsRefreshing}
+            onRefresh={onRefresh}
+            colors={[theme.text]}
+            progressBackgroundColor={theme.background}
+          />
+        }>
+        <View style={styles.statsContainer}>
+          {isStatsLoading ? (
+            <DotIndicator
+              color={COLORS.secondary}
+              count={3}
+              size={SIZES.medium}
+            />
+          ) : (
+            <>
+              <View style={styles.statItem}>
+                <Text style={styles.statNumber}>
+                  {formatStatsResult(tagsStats?.open)}
+                </Text>
+                <Text style={styles.statLabel}>{t("home.tags_open")}</Text>
               </View>
-            </MyButton>
-          );
-        })}
+              <View style={styles.statItem}>
+                <View style={styles.statItemSeperator} />
+                <Text style={styles.statNumber}>
+                  {formatStatsResult(tagsStats?.toDo)}
+                </Text>
+                <Text style={styles.statLabel}>
+                  {t("home.tags_in_progress")}
+                </Text>
+              </View>
+              <View style={styles.statItem}>
+                <View style={styles.statItemSeperator} />
+                <Text style={styles.statNumber}>
+                  {formatStatsResult(tagsStats?.done)}
+                </Text>
+                <Text style={styles.statLabel}>{t("home.tags_completed")}</Text>
+              </View>
+            </>
+          )}
+        </View>
+
+        <View style={styles.scrollViewContent}>
+          {HOMEDATA.map((item, index) => {
+            let subtitleText = "";
+            let navigate = null;
+
+            if (item.id === 1) {
+              subtitleText = `${tagsStats?.total} ${t("home.1.subtitle")}`;
+              navigate = "Tags";
+            } else if (item.id === 2) {
+              subtitleText = `${tagsStats?.total} ${t("home.2.subtitle")}`;
+              navigate = "Actions";
+            } else if (item.id === 3) {
+              subtitleText = `${t("home.3.subtitle")}`;
+            }
+
+            return (
+              <MyButton
+                key={index}
+                pressHandler={() => cardPressHandler(navigate)}>
+                <View
+                  style={[
+                    styles.cardContainer,
+                    {
+                      backgroundColor: theme.background,
+                      flexGrow: 1,
+                    },
+                    theme.name === "dark" && styles.cardDark,
+                    theme.name === "light" && styles.cardLight,
+                  ]}>
+                  <View style={styles.cardIconContainer}>
+                    <Image source={item.icon} style={styles.cardIcon} />
+                  </View>
+                  <View style={styles.cardTextContainer}>
+                    <Text style={[styles.cardTitle, { color: theme.text }]}>
+                      {t(`home.${item.id}.title`)}
+                    </Text>
+
+                    <Text style={styles.cardSubtitle}>{subtitleText}</Text>
+                  </View>
+                </View>
+              </MyButton>
+            );
+          })}
+        </View>
       </ScrollView>
     </View>
   );
@@ -174,8 +232,6 @@ const styles = StyleSheet.create({
   },
 
   headerContainer: {
-    borderBottomRightRadius: 20,
-    borderBottomLeftRadius: 20,
     backgroundColor: COLORS.primary,
     padding: SIZES.medium,
   },
@@ -214,11 +270,14 @@ const styles = StyleSheet.create({
   },
   statsContainer: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "flex-start",
     gap: SIZES.medium,
     justifyContent: "space-between",
     paddingVertical: SIZES.large,
     paddingBottom: 2 * SIZES.large,
+    backgroundColor: COLORS.primary,
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20,
   },
   statItem: {
     flex: 1,
@@ -256,8 +315,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: SIZES.medium,
     flexWrap: "wrap",
-    marginHorizontal: 1.5 * SIZES.medium,
+    paddingHorizontal: 1.5 * SIZES.medium,
     paddingVertical: SIZES.small,
+    marginTop: -SIZES.large,
   },
   cardContainer: {
     borderRadius: 20,

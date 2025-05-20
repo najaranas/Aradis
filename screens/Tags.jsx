@@ -13,7 +13,7 @@
 
 import { Ionicons } from "@expo/vector-icons";
 import { Picker } from "@react-native-picker/picker";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Text,
   StyleSheet,
@@ -21,7 +21,6 @@ import {
   Keyboard,
   View,
   Modal,
-  StatusBar,
   Image,
   RefreshControl,
 } from "react-native";
@@ -34,7 +33,6 @@ import {
   FlatList,
   GestureHandlerRootView,
   ScrollView,
-  TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import CustomDateTimePicker from "../components/CustomDateTimePicker";
 import { initialFilters } from "../constants/initialStates";
@@ -44,7 +42,6 @@ import { formatDate, parse } from "date-fns";
 import TagFpsHeader from "../components/TagFpsHeader";
 import SearchFilter from "../components/SearchFilter";
 import { useTranslation } from "react-i18next";
-import * as NavigationBar from "expo-navigation-bar";
 import { useNavigation } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { fetchTags } from "../utils/api/tagApi";
@@ -55,7 +52,6 @@ import { noTagsImage } from "../constants/dataImage";
  * Home Screen Component
  * Displays a searchable and filterable list of anomaly report tags
  * Includes search functionality, multiple filter options, and sorting capabilities
- * @param {object} navigation - Navigation prop from React Navigation
  */
 export default function Tags({}) {
   const { theme } = useTheme();
@@ -63,15 +59,39 @@ export default function Tags({}) {
   const insets = useSafeAreaInsets();
   const { t } = useTranslation();
   const [tags, setTags] = useState([]);
+  const [filterSelectedTags, setFilterSelectedTags] = useState([]);
+  const [initialTags, setInitialTags] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
-  const [filterSelectedTags, setFilterSelectedTags] = useState([]);
   const [isFilterModalVisible, setFilterModalVisible] = useState(false);
   const listRef = useRef(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [refreshing, setRefreshing] = React.useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [isFilterActive, setIsFilterActive] = useState(false);
+  console.log("tags", tags);
+  // Map for category translation
+  const categoryMap = {
+    security: t("cardDetails.category.security"),
+    production: t("cardDetails.category.production"),
+    maintenance: t("cardDetails.category.maintenance"),
+    quality: t("cardDetails.category.quality"),
+  };
+  // Map for priority translation
+  const priorityMap = {
+    normal: t("cardDetails.priority.options.normal"),
+    urgent: t("cardDetails.priority.options.urgent"),
+    "t.urgent": t("cardDetails.priority.options.t_urgent"),
+  };
 
-  const onRefresh = React.useCallback(() => {
+  useEffect(() => {
+    if (selectedFilters !== initialFilters) {
+      setIsFilterActive(true);
+    } else {
+      setIsFilterActive(false);
+    }
+  }, [selectedFilters]);
+
+  const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadTags();
   }, []);
@@ -83,22 +103,19 @@ export default function Tags({}) {
   const loadTags = async () => {
     try {
       const tagsData = await fetchTags();
-      console.log(tagsData);
+      console.log("tagsData", tagsData);
       setTags(sortHandle(tagsData));
-      // setTags(filterTags(tagsData, false));
-      setIsLoading(false);
-      // sortHandle(tagsData);
+      setInitialTags(tagsData);
     } catch (error) {
       console.error("Failed to load tags:", error);
     } finally {
       setRefreshing(false);
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     loadTags();
-    // setTags(filterTags(tags, false));
-    // sortHandle(tags);
   }, []);
 
   /**
@@ -126,7 +143,8 @@ export default function Tags({}) {
    */
   const clearSearchInputHandler = () => {
     setSearchQuery("");
-    setTags(filterSelectedTags.length === 0 ? TAGS : filterSelectedTags);
+    setTags(filterSelectedTags.length === 0 ? initialTags : filterSelectedTags);
+    // setTags(tags);
     scrollToListTop();
   };
 
@@ -155,12 +173,12 @@ export default function Tags({}) {
    * Closes the filter modal and scrolls to top after applying
    */
   const applyBtnHandler = () => {
-    // const filteredWithSearch = filterTags(tags, true);
-    // const filteredWithoutSearch = filterTags(tags, false);
+    const filteredWithSearch = filterTags(initialTags, true);
+    const filteredWithoutSearch = filterTags(initialTags, false);
 
-    // setFilterSelectedTags(filteredWithoutSearch);
-    // setTags(filteredWithSearch);
-    setTags(sortHandle(tags));
+    setFilterSelectedTags(filteredWithoutSearch);
+    setTags(filteredWithSearch);
+    // setTags((tags));
     setFilterModalVisible(false);
     scrollToListTop();
   };
@@ -182,19 +200,26 @@ export default function Tags({}) {
    * @param {string} text - Search query to filter tags
    */
   const searchFilterHandler = (text) => {
-    let filtredTags =
-      filterSelectedTags.length === 0 ? TAGS : filterSelectedTags;
+    const searchText = text?.toLowerCase().trim();
 
-    filtredTags = filtredTags.filter((tag) => {
+    let filteredTags =
+      filterSelectedTags.length === 0 ? initialTags : filterSelectedTags;
+
+    filteredTags = filteredTags.filter((tag) => {
+      const translatedCategory =
+        categoryMap[tag?.category?.toLowerCase()] || "";
+      const translatedPriority =
+        priorityMap[tag?.priority?.toLowerCase()] || "";
+      const tagId = tag?.tagId || "";
+
       return (
-        tag?.category?.toLowerCase().includes(text?.toLowerCase()) ||
-        tag?.priority?.toLowerCase().includes(text?.toLowerCase()) ||
-        tag?.tagNumber?.toLowerCase().includes(text?.toLowerCase())
+        translatedCategory.toLowerCase().includes(searchText) ||
+        translatedPriority.toLowerCase().includes(searchText) ||
+        tagId.toLowerCase().includes(searchText)
       );
     });
 
-    setTags(filtredTags);
-
+    setTags(filteredTags);
     scrollToListTop();
   };
 
@@ -205,7 +230,7 @@ export default function Tags({}) {
    * @param {string} filterType - Type of filter (sort, date, categories, priority, status)
    * @param {string} dateItemType - Type of data value (selectedFromDate , ...)
    */
-  const handelSelectedFilterItems = (item, filterType, dateItemType) => {
+  const handleSelectedFilterItems = (item, filterType, dateItemType) => {
     if (filterType === "sort" || filterType === "date") {
       setSelectedFilters((oldState) => ({
         ...oldState,
@@ -359,30 +384,30 @@ export default function Tags({}) {
         priority: tag?.priority?.toLowerCase() || "",
         status: tag?.status.toLowerCase() || "",
         tagId: tag?.tagId?.toLowerCase() || "",
-        date: parseDate(tag?.createdAt, "MMM dd, yyyy") || "",
+        date: new Date(tag?.createdAt) || "",
         search: withSearch
           ? tag?.category?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
             tag?.priority?.toLowerCase().includes(searchQuery?.toLowerCase()) ||
             tag?.tagId?.toLowerCase().includes(searchQuery?.toLowerCase())
           : true,
       };
-
+      console.log("tagProps", tagProps);
       const categoryMatch =
         selectedFilters.categories.length === 0 ||
         selectedFilters.categories.some(
-          (filter) => filter.name?.toLowerCase() === tagProps.category
+          (filter) => filter?.name?.toLowerCase() === tagProps.category
         );
-
+      console.log("categoryMatch", categoryMatch);
       const priorityMatch =
         selectedFilters.priority.length === 0 ||
         selectedFilters.priority.some(
-          (filter) => filter.name?.toLowerCase() === tagProps.priority
+          (filter) => filter?.name?.toLowerCase() === tagProps.priority
         );
 
       const statusMatch =
         selectedFilters.status.length === 0 ||
         selectedFilters.status.some(
-          (filter) => filter.name?.toLowerCase() === tagProps.status
+          (filter) => filter?.name?.toLowerCase() === tagProps.status
         );
 
       const selectedToDate = selectedFilters.date.selectedToDate || new Date();
@@ -399,10 +424,10 @@ export default function Tags({}) {
         dateMatch
       );
     });
+    console.log("filtredData", filtredData);
+    // const sortedData = sortHandle(filtredData);
 
-    const sortedData = sortHandle(filtredData);
-
-    return sortedData;
+    return filtredData;
   };
 
   /**
@@ -467,11 +492,10 @@ export default function Tags({}) {
             )}
             contentContainerStyle={styles.tagsContentContainer}
             estimatedItemSize={200}
-            renderItem={({ item, index }) => {
-              console.log(item);
+            renderItem={({ item: itemData, index }) => {
               return (
                 <Card
-                  cardData={item}
+                  cardData={itemData}
                   preventData={[
                     "deadline",
                     "actions",
@@ -493,15 +517,27 @@ export default function Tags({}) {
                 progressBackgroundColor={theme.background}
               />
             }>
-            <View style={styles.noDataContainer}>
-              <Image source={noTagsImage} style={styles.noTagsImg} />
-              <Text style={[styles.noTagsTitle, { color: theme.text }]}>
-                {t("tagsReporting.no_tags")}
-              </Text>
-              <Text style={styles.noTagsText}>
-                {t("tagsReporting.check_back_tags")}
-              </Text>
-            </View>
+            {isFilterActive ? (
+              <View style={styles.noDataContainer}>
+                <Image source={noTagsImage} style={styles.noTagsImg} />
+                <Text style={[styles.noTagsTitle, { color: theme.text }]}>
+                  {t("tagsReporting.no_tags_filtered")}
+                </Text>
+                <Text style={styles.noTagsText}>
+                  {t("tagsReporting.reset_filter")}
+                </Text>
+              </View>
+            ) : (
+              <View style={styles.noDataContainer}>
+                <Image source={noTagsImage} style={styles.noTagsImg} />
+                <Text style={[styles.noTagsTitle, { color: theme.text }]}>
+                  {t("tagsReporting.no_tags")}
+                </Text>
+                <Text style={styles.noTagsText}>
+                  {t("tagsReporting.check_back_tags")}
+                </Text>
+              </View>
+            )}
           </ScrollView>
         )}
       </View>
@@ -555,7 +591,7 @@ export default function Tags({}) {
                         <MyButton
                           noOpacity={true}
                           pressHandler={() =>
-                            handelSelectedFilterItems(item, "categories")
+                            handleSelectedFilterItems(item, "categories")
                           }>
                           <View
                             style={{
@@ -606,7 +642,7 @@ export default function Tags({}) {
                         <MyButton
                           noOpacity={true}
                           pressHandler={() =>
-                            handelSelectedFilterItems(item, "priority")
+                            handleSelectedFilterItems(item, "priority")
                           }>
                           <View
                             style={{
@@ -657,7 +693,7 @@ export default function Tags({}) {
                         <MyButton
                           noOpacity={true}
                           pressHandler={() =>
-                            handelSelectedFilterItems(item, "status")
+                            handleSelectedFilterItems(item, "status")
                           }>
                           <View
                             style={{
@@ -699,7 +735,7 @@ export default function Tags({}) {
                     contentContainerStyle={[styles.filterBoxContainer]}>
                     <MyButton
                       pressHandler={() =>
-                        handelSelectedFilterItems(
+                        handleSelectedFilterItems(
                           true,
                           "date",
                           "isFromDatePickerVisible"
@@ -723,7 +759,7 @@ export default function Tags({}) {
                     </Text>
                     <MyButton
                       pressHandler={() =>
-                        handelSelectedFilterItems(
+                        handleSelectedFilterItems(
                           true,
                           "date",
                           "isToDatePickerVisible"
@@ -752,19 +788,24 @@ export default function Tags({}) {
                     <CustomDateTimePicker
                       pickerMode="date"
                       isVisible={selectedFilters?.date?.isFromDatePickerVisible}
-                      setIsVisible={handelSelectedFilterItems}
+                      setIsVisible={handleSelectedFilterItems}
                       selectedDate={selectedFilters?.date?.selectedFromDate}
-                      setSelectedDate={handelSelectedFilterItems}
+                      setSelectedDate={handleSelectedFilterItems}
                       dateStateField="selectedFromDate"
                       visibilityStateField="isFromDatePickerVisible"
+                      // pickerMode="date"
+                      // isVisible={isFromDatePickerVisible}
+                      // setIsVisible={setIsFromDatePickerVisible}
+                      // selectedDate={selectedFilters?.date?.selectedFromDate}
+                      // setSelectedDate={handleSelectedFilterItems}
                     />
 
                     <CustomDateTimePicker
                       pickerMode="date"
                       isVisible={selectedFilters?.date?.isToDatePickerVisible}
-                      setIsVisible={handelSelectedFilterItems}
+                      setIsVisible={handleSelectedFilterItems}
                       selectedDate={selectedFilters?.date?.selectedToDate}
-                      setSelectedDate={handelSelectedFilterItems}
+                      setSelectedDate={handleSelectedFilterItems}
                       dateStateField="selectedToDate"
                       visibilityStateField="isToDatePickerVisible"
                     />
@@ -797,7 +838,7 @@ export default function Tags({}) {
                       dropdownIconRippleColor={theme.lightGray}
                       mode="dialog"
                       onValueChange={(itemValue) =>
-                        handelSelectedFilterItems(itemValue, "sort")
+                        handleSelectedFilterItems(itemValue, "sort")
                       }>
                       {TAGFILTERDATA?.SORT_BY?.data.map((item, index) => {
                         return (

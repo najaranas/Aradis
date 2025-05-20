@@ -9,6 +9,7 @@ import { useTheme } from "../hooks/useTheme";
 import Home from "../screens/Home";
 import Actions from "../screens/Actions";
 import { useTranslation } from "react-i18next";
+import Scanner from "../screens/Scanner";
 
 const HomeStack = createNativeStackNavigator();
 

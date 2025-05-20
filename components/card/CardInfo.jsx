@@ -16,15 +16,15 @@ export default function CardInfo({ cardDetails, preventData, isRTL }) {
   const { theme } = useTheme();
   const { t } = useTranslation();
 
-  console.log(cardDetails);
+  console.log("cardDetails", cardDetails);
   return (
     <View style={styles.container}>
       {cardDetails?.map((item, index) => {
-        const isPrevent = preventData?.some(
+        const isPreventField = preventData?.some(
           (prevItem) => prevItem === item?.label?.toLowerCase()
         );
         return (
-          !isPrevent && (
+          !isPreventField && (
             <View
               key={index}
               style={[
@@ -32,11 +32,10 @@ export default function CardInfo({ cardDetails, preventData, isRTL }) {
                 {
                   alignItems:
                     item.label === "foundedBy" ||
-                    item.label === "responsiblePerson"
+                    item.label === "responsibleDepartment"
                       ? "center"
                       : "flex-start",
                 },
-                isRTL && { flexDirection: "row-reverse" },
               ]}>
               <Text style={styles.label}>
                 {t(`cardDetails.taskDetails.${item?.label}`) + " :"}
@@ -48,32 +47,33 @@ export default function CardInfo({ cardDetails, preventData, isRTL }) {
                     <View
                       style={{
                         flexDirection: isRTL ? "row-reverse" : "row",
-                        alignItems: "flex-end",
+                        alignItems: "center",
                         gap: 3,
                       }}>
                       <View
                         style={{
-                          flexDirection: isRTL ? "row-reverse" : "row",
+                          flexDirection: "row",
                           alignItems: "flex-end",
                         }}>
                         <View style={{ flexDirection: "row" }}>
-                          {item?.value.slice(0, 3).map((val, valIndex) => {
-                            return (
-                              <View
-                                key={`${index}-${valIndex}`}
-                                style={{
-                                  backgroundColor: theme.background,
-                                  padding: 2,
-                                  borderRadius: 50,
-                                  marginLeft: valIndex !== 0 ? -10 : 0,
-                                }}>
-                                <Image
-                                  source={val.avatar}
-                                  style={styles.userImg}
-                                />
-                              </View>
-                            );
-                          })}
+                          {item?.value?.length != 0 &&
+                            item?.value.slice(0, 3).map((val, valIndex) => {
+                              return (
+                                <View
+                                  key={`${index}-${valIndex}`}
+                                  style={{
+                                    backgroundColor: theme.background,
+                                    padding: 2,
+                                    borderRadius: 50,
+                                    marginLeft: valIndex !== 0 ? -10 : 0,
+                                  }}>
+                                  <Image
+                                    source={val.image}
+                                    style={styles.userImg}
+                                  />
+                                </View>
+                              );
+                            })}
                         </View>
 
                         <View style={styles.userInfoIcon}>
@@ -107,22 +107,31 @@ export default function CardInfo({ cardDetails, preventData, isRTL }) {
                         maxHeight: 3.7 * SIZES.xLarge,
                         paddingLeft: SIZES.small,
                       }}>
-                      {item?.value?.map((val, valIndex) => (
-                        <MenuOption
-                          key={`${index}-menu-${valIndex}`}
-                          value={valIndex}
-                          disableTouchable>
-                          <View
-                            style={{
-                              flexDirection: "row",
-                              alignItems: "center",
-                              gap: SIZES.small,
-                            }}>
-                            <Image source={val.avatar} style={styles.userImg} />
-                            <Text style={styles.label}>{val.name}</Text>
-                          </View>
-                        </MenuOption>
-                      ))}
+                      {item?.value.length != 0 ? (
+                        item?.value?.map((val, valIndex) => (
+                          <MenuOption
+                            key={`${index}-menu-${valIndex}`}
+                            value={valIndex}
+                            disableTouchable>
+                            <View
+                              style={{
+                                flexDirection: "row",
+                                alignItems: "center",
+                                gap: SIZES.small,
+                              }}>
+                              <Image
+                                source={val.image}
+                                style={styles.userImg}
+                              />
+                              <Text style={styles.label}>{val.name}</Text>
+                            </View>
+                          </MenuOption>
+                        ))
+                      ) : (
+                        <Text style={styles.label}>
+                          {t("cardDetails.no_information_found")}
+                        </Text>
+                      )}
                     </ScrollView>
                   </MenuOptions>
                 </Menu>

@@ -9,6 +9,13 @@ import CardDetails from "./CardDetails";
 import { useTranslation } from "react-i18next";
 import { formatDate } from "date-fns";
 import { ar, fr } from "date-fns/locale";
+import {
+  maintenanceIcon,
+  productionIcon,
+  qualityIcon,
+  securityIcon,
+  teamIcon,
+} from "../../constants/dataImage";
 
 export default function Card({ cardData, preventData, isUpdated, isRTL }) {
   const { t } = useTranslation();
@@ -17,6 +24,7 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
     color: COLORS.gray,
     bgColor: "transparent",
   });
+  console.log("cardData", cardData);
 
   const cardDetails = [
     {
@@ -34,51 +42,28 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
     },
     { label: "equipment", value: cardData?.equipment },
     {
-      label: "responsiblePerson",
-      value: [
-        {
-          name: "Person A",
-          avatar:
-            "https://i.pinimg.com/736x/de/2b/d1/de2bd14c37a797e1913b1cdd4766c9e6.jpg",
-        },
-        {
-          name: "Person B",
-          avatar:
-            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
-        },
-        {
-          name: "Person B",
-          avatar:
-            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
-        },
-        {
-          name: "Person B",
-          avatar:
-            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
-        },
-        {
-          name: "Person B",
-          avatar:
-            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
-        },
-        {
-          name: "Person B",
-          avatar:
-            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
-        },
-        {
-          name: "Person B",
-          avatar:
-            "https://i.pinimg.com/736x/16/41/6e/16416ec2ba02f9617953b37813d1e07c.jpg",
-        },
-      ],
+      label: "responsibleDepartment",
+
+      value: cardData?.tagAction
+        ?.map((item) => ({
+          name: item?.dataValues?.userService,
+          image: getServiceIcon(item?.dataValues?.userService),
+        }))
+        // Remove duplicates based on name
+        .reduce((acc, item) => {
+          const isDuplicate = acc.some(
+            (existing) => existing.name === item.name
+          );
+          if (!isDuplicate) acc.push(item);
+          return acc;
+        }, []),
     },
     {
       label: "foundedBy",
       value: [
         {
           name: `${cardData?.user?.firstName} ${cardData?.user?.lastName}`,
-          avatar: cardData?.user?.image,
+          image: cardData?.user?.image,
         },
       ],
     },
@@ -134,6 +119,20 @@ export default function Card({ cardData, preventData, isUpdated, isRTL }) {
     }
   };
 
+  function getServiceIcon(service) {
+    switch (service?.toLowerCase()) {
+      case "security":
+        return securityIcon;
+      case "production":
+        return productionIcon;
+      case "maintenance":
+        return maintenanceIcon;
+      case "quality":
+        return qualityIcon;
+      default:
+        return teamIcon;
+    }
+  }
   useEffect(() => {
     getCategoryColor(cardData?.category);
   }, [cardData]);

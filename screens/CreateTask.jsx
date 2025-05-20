@@ -47,7 +47,7 @@ export default function CreateTask() {
               styles.segment,
               {
                 backgroundColor:
-                  activePage === 0 ? COLORS.white : "transparent",
+                  activePage === 0 ? theme.secondaryBackground : "transparent",
                 borderRadius: 7,
               },
             ]}
@@ -57,11 +57,12 @@ export default function CreateTask() {
             <Ionicons
               name={"pricetags-outline"}
               size={1.3 * SIZES.medium}
-              color={theme.darkGray}
+              color={theme.text}
             />
             <Text
               style={[
                 activePage === 0 ? styles.activeText : styles.regularText,
+                { color: theme.text },
               ]}>
               {t("createTask.segmentedControl.add_tag")}
             </Text>
@@ -96,20 +97,20 @@ export default function CreateTask() {
         {/*  */}
       </View>
 
-      <PagerView
+      {/* <PagerView
         ref={pagerViewRef}
         style={styles.PagerView}
         initialPage={activePage}
         scrollEnabled={false}
-        onPageSelected={handlePageSelected}>
-        <View style={styles.page} key="1">
-          <AddTag />
-        </View>
+        onPageSelected={handlePageSelected}> */}
+      <View style={styles.page} key="1">
+        <AddTag />
+      </View>
 
-        {/* <View style={styles.page} key="2">
+      {/* <View style={styles.page} key="2">
           <AddFps />
         </View> */}
-      </PagerView>
+      {/* </PagerView> */}
     </View>
   );
 }

@@ -1,6 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import DateTimePicker from "react-native-modal-datetime-picker";
+// import DateTimePicker from "@react-native-community/datetimepicker";
+
 import { useTheme } from "../hooks/useTheme";
 
 export default function CustomDateTimePicker({
@@ -14,7 +16,6 @@ export default function CustomDateTimePicker({
 }) {
   const { t } = useTranslation();
   const { theme } = useTheme();
-
   const handleConfirm = (newDate) => {
     // Proceed with date selection
     if (newDate) {
@@ -39,7 +40,8 @@ export default function CustomDateTimePicker({
       mode={pickerMode}
       onConfirm={handleConfirm}
       onCancel={handleCancel}
-      date={selectedDate || new Date()}
+      // date={selectedDate || new Date()}
+      value={selectedDate || new Date()}
       // is24Hour={true}
       isDarkModeEnabled={theme.name === "dark"}
       negativeButton={{ label: t("DatePicker.cancel") }}

@@ -10,26 +10,29 @@
 //
 
 import {
-  SafeAreaView,
   Linking,
   StyleSheet,
   Text,
   View,
   I18nManager,
   AppState,
+  StatusBar,
 } from "react-native";
 import { useEffect, useState, useRef, useCallback } from "react";
 import * as tabNavigation from "expo-navigation-bar";
-import { StatusBar } from "expo-status-bar";
+// import { StatusBar } from "expo-status-bar";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
 import MyButton from "../components/MyButton";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import QRCodeOverlay from "../components/QRCodeOverlay";
 import { useTranslation } from "react-i18next";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { useTheme } from "../hooks/useTheme";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomToast from "../components/CustomToast";
 
@@ -74,16 +77,15 @@ export default function Scanner() {
 
   // Handle navigation bar visibility
   useEffect(() => {
-    tabNavigation.setVisibilityAsync("hidden");
     tabNavigation.setButtonStyleAsync("light");
-
+    tabNavigation.setBackgroundColorAsync("#000000");
     return () => {
-      tabNavigation.setVisibilityAsync("visible");
       tabNavigation.setButtonStyleAsync(
         theme.name === "light" ? "dark" : "light"
       );
+      tabNavigation.setBackgroundColorAsync(theme.background);
     };
-  }, []);
+  });
 
   const handleFlash = () => {
     setIsFlashOn((prev) => !prev);
@@ -181,8 +183,8 @@ export default function Scanner() {
     fetchScan();
   };
   return (
-    <SafeAreaView style={[styles.container]}>
-      <StatusBar hidden />
+    <View style={[styles.container]}>
+      <StatusBar barStyle={"light-content"} />
 
       {/* error toast */}
       <CustomToast
@@ -319,7 +321,7 @@ export default function Scanner() {
           </View>
         </>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 

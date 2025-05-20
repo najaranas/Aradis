@@ -22,6 +22,7 @@ import { t } from "i18next";
 import { TabSelector } from "./TabSelector";
 import PagerView from "react-native-pager-view";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { formatDate } from "date-fns";
 
 const tabs = [
   { id: 1, label: "description" },
@@ -47,6 +48,8 @@ export default function CardDetails({
   const [popupImgUri, setPopupImgUri] = useState("");
   const [imgHeight, setImgHeight] = useState(0);
   const [activeTab, setActiveTab] = useState(1);
+  const [isActionModalVisible, setIsActionModalVisible] = useState(false);
+  const [actionModalData, setActionModalData] = useState(null);
   const [activePage, setActivePage] = useState(0);
   const pagerViewRef = useRef(null);
   const flatListRef = useRef(null);
@@ -61,14 +64,18 @@ export default function CardDetails({
   const hideModal = () => {
     setModalVisible(false);
   };
+  const hideActionDetailModal = () => {
+    setIsActionModalVisible(false);
+  };
 
   const onTabChange = (id) => {
     setActiveTab(id);
     pagerViewRef.current?.setPage(id - 1);
   };
 
-  const getData = (data, type) => {
-    return data?.find((item) => item?.label === type)?.value;
+  const actionPressHandler = (index) => {
+    setIsActionModalVisible(true);
+    setActionModalData(cardData?.tagAction[index]);
   };
 
   const handlePageSelected = (event) => {
@@ -89,7 +96,7 @@ export default function CardDetails({
       });
     }
   }, [imageData]);
-
+  console.log("actionModalData", actionModalData);
   return (
     <MenuProvider
       skipInstanceCheck
@@ -147,17 +154,52 @@ export default function CardDetails({
             <View key="1" style={{ paddingTop: SIZES.large }}>
               <ScrollView nestedScrollEnabled={true}>
                 <Text style={{ color: theme.text }}>
-                  {cardData?.description}
+                  {cardData?.description ||
+                    t("cardDetails.no_description_found")}
                 </Text>
               </ScrollView>
             </View>
 
-            <View key="2" style={{ paddingTop: SIZES.large }}>
-              <ScrollView nestedScrollEnabled={true}>
-                <Text style={{ color: theme.text }}>
-                  {/* Content for actions tab */}
+            <View
+              key="2"
+              style={{ paddingTop: SIZES.large, gap: SIZES.medium }}>
+              {cardData?.tagAction?.length > 1 ? (
+                cardData?.tagAction.map((item, index) => (
+                  <MyButton
+                    key={index}
+                    pressHandler={() => actionPressHandler(index)}>
+                    <View style={styles.itemContainer}>
+                      <Text style={[styles.itemTitle, { color: theme.text }]}>
+                        {t("cardDetails.action_number")} {index + 1}
+                      </Text>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          gap: 1.5 * SIZES.medium,
+                          alignItems: "center",
+                        }}>
+                        <Text
+                          style={[
+                            styles.viewDetailsText,
+                            { color: theme.text },
+                          ]}>
+                          {t("cardDetails.action_view_details")}
+                        </Text>
+                      </View>
+                    </View>
+                  </MyButton>
+                ))
+              ) : (
+                <Text
+                  style={{
+                    color: COLORS.gray,
+                    fontFamily: FONTS.regular,
+                    fontSize: SIZES.medium,
+                    paddingVerticalEnd: SIZES.medium,
+                  }}>
+                  {t("cardDetails.no_action_found")}
                 </Text>
-              </ScrollView>
+              )}
             </View>
 
             <View key="3" style={{ paddingTop: SIZES.large }}>
@@ -323,6 +365,158 @@ export default function CardDetails({
             </Pressable>
           </Pressable>
         </Modal>
+
+        {/* Action Modal */}
+        <Modal
+          animationType="slide"
+          style={{ flex: 1 }}
+          statusBarTranslucent={true}
+          visible={isActionModalVisible}
+          onRequestClose={hideActionDetailModal}>
+          <View
+            style={{
+              ...styles.container,
+              backgroundColor: theme.background,
+              paddingTop: SIZES.small + insets.top,
+              flex: 1,
+            }}>
+            <TopTabPage
+              text={t("cardDetails.action_details")}
+              BackHandler={hideActionDetailModal}
+            />
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                gap: SIZES.medium,
+              }}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: SIZES.small,
+                  alignItems: "center",
+                }}>
+                <Text
+                  style={{
+                    color: theme.text,
+                    color: COLORS.gray,
+                    fontFamily: FONTS.regular,
+                    fontSize: SIZES.medium,
+                  }}>
+                  {t("cardDetails.action_details_fields.tagId")} :
+                </Text>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: SIZES.medium,
+                    fontFamily: FONTS.regular,
+                  }}>
+                  {actionModalData?.dataValues?.tagId}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: SIZES.small,
+                  alignItems: "center",
+                }}>
+                <Text
+                  style={{
+                    color: theme.text,
+                    color: COLORS.gray,
+                    fontFamily: FONTS.regular,
+                    fontSize: SIZES.medium,
+                  }}>
+                  {t("cardDetails.action_details_fields.procedure")} :
+                </Text>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: SIZES.medium,
+                    fontFamily: FONTS.regular,
+                  }}>
+                  {actionModalData?.dataValues?.procedure}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: SIZES.small,
+                  alignItems: "center",
+                }}>
+                <Text
+                  style={{
+                    color: theme.text,
+                    color: COLORS.gray,
+                    fontFamily: FONTS.regular,
+                    fontSize: SIZES.medium,
+                  }}>
+                  {t("cardDetails.action_details_fields.date")} :
+                </Text>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: SIZES.medium,
+                    fontFamily: FONTS.regular,
+                  }}>
+                  {actionModalData?.dataValues?.quand &&
+                    formatDate(
+                      new Date(actionModalData?.dataValues?.quand),
+                      "dd-MM-yyyy HH:mm"
+                    )}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: SIZES.small,
+                  alignItems: "center",
+                }}>
+                <Text
+                  style={{
+                    color: theme.text,
+                    color: COLORS.gray,
+                    fontFamily: FONTS.regular,
+                    fontSize: SIZES.medium,
+                  }}>
+                  {t("cardDetails.action_details_fields.category")} :
+                </Text>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: SIZES.medium,
+                    fontFamily: FONTS.regular,
+                  }}>
+                  {actionModalData?.dataValues?.userCategory}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  gap: SIZES.small,
+                  alignItems: "center",
+                }}>
+                <Text
+                  style={{
+                    color: theme.text,
+                    color: COLORS.gray,
+                    fontFamily: FONTS.regular,
+                    fontSize: SIZES.medium,
+                  }}>
+                  {t("cardDetails.action_details_fields.service")} :
+                </Text>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: SIZES.medium,
+                    fontFamily: FONTS.regular,
+                  }}>
+                  {actionModalData?.dataValues?.userService}
+                </Text>
+              </View>
+            </ScrollView>
+          </View>
+        </Modal>
       </View>
     </MenuProvider>
   );
@@ -359,5 +553,33 @@ const styles = StyleSheet.create({
     fontFamily: FONTS.regular,
     fontSize: SIZES.medium,
     paddingVerticalEnd: SIZES.medium,
+  },
+
+  itemContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderColor: COLORS.lightGray,
+    borderWidth: 0.5,
+    paddingVertical: SIZES.medium,
+    paddingHorizontal: SIZES.small,
+    borderRadius: 10,
+  },
+  itemTitle: {
+    fontFamily: FONTS.medium,
+  },
+  viewDetailsText: {
+    fontFamily: FONTS.light,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "white",
+    padding: 1.5 * SIZES.medium,
+    paddingTop: 1.3 * SIZES.xLarge,
+    gap: SIZES.medium,
+  },
+  modalTitle: {
+    fontSize: 1.5 * SIZES.medium,
+    fontFamily: FONTS.medium,
   },
 });

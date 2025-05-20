@@ -377,18 +377,21 @@
     "signatures": "Please select a valid signature option.",
     "escalationNeeded": "Please select if escalation is needed."
   },
+
   "tagsReporting": {
     "headerTitle": "Anomaly Reporting (Tags)",
     "searchPlaceholder": "Search tags...",
     "no_tags": "No Tags Available",
     "check_back_tags": "Check back later for tasks, deadlines, zone activity, and machine-related tags.",
+    "no_tags_filtered": "No tags match your filter",
+    "reset_filter": "Reset the filter to see all available tags.",
     "filter": {
       "title": "Filter",
       "close": "Close",
       "category": {
         "sectionName": "Category",
         "options": {
-          "1": "Safety",
+          "1": "Security",
           "2": "Production",
           "3": "Maintenance",
           "4": "Quality"
@@ -433,8 +436,22 @@
   },
   "cardDetails": {
     "tagDetails": "Tag Details",
-    "tagLabel": "Tag Number",
+    "no_description_found": "No Description  found",
+    "no_action_found": "No Actions found",
+    "action_details": "Action Details",
+    "action_number": "Action N°",
+    "action_view_details": "Voir les détails",
+    "no_information_found": "No information available",
     "no_iamge_found": "No image captured",
+
+    "action_details_fields": {
+      "tagId": "Tag ID",
+      "procedure": "Procedure",
+      "date": "Date",
+      "category": "Category",
+      "service": "Service"
+    },
+    "tagLabel": "Tag Number",
     "priority": {
       "label": "Priority",
       "options": {
@@ -460,7 +477,7 @@
       "zone": "Zone",
       "machine": "Machine",
       "equipment": "Equipment",
-      "responsiblePerson": "Responsible Person",
+      "responsibleDepartment": "Responsible Department",
       "tagNumber": "Tag Number",
       "foundedBy": "Founded By",
       "actions": "Actions",
@@ -482,7 +499,8 @@
     "forgot_password_text": "If you need to reset your password, please contact your system administrator at [admin@example.com] or call [+123 456 7890].\n\nFor security reasons, only the administrator is authorized to manage password changes.",
     "email_pattern_error": "Invalid email format. Please use a standard email address (example: name@domain.com).",
     "password_pattern_error": "Password must contain at least 8 characters with one lowercase, one uppercase, one number, and one special character.",
-    "connection_error": "Connection error. Please check your internet and try again."
+    "connection_error": "Connection error. Please check your internet and try again.",
+    "access_denied": "Access denied. Only operational users are allowed to log in."
   },
   "noInternet": {
     "noInternet": "No Internet Connection",
@@ -491,6 +509,7 @@
   },
   "home": {
     "hello": "Hello,",
+    "tags_open": "Tags Opened",
     "tags_in_progress": "Tags in Progress",
     "tags_completed": "Tags Completed",
     "1": {
@@ -561,6 +580,23 @@
     }
   },
   "actions": {
-    "title": "My Actions"
+    "title": "My Actions",
+    "no_actions_found": "No Actions found",
+
+    "status": {
+      "all": "All",
+      "open": "Open",
+      "in_progress": "In Progress",
+      "done": "Done"
+    },
+    "actionInfo": {
+      "tag": "TAG",
+      "fps": "FPS",
+      "date": "Date",
+      "status": "Status",
+      "scan_status": "Scan Status",
+      "scanned": "Scanned",
+      "unscanned": "Unscanned"
+    }
   }
 }

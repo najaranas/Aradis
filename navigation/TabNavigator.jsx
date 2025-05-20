@@ -5,7 +5,7 @@
 // It uses React Navigation for navigation, and Expo's NavigationBar API for setting the navigation bar color.
 // It also includes a check for internet connectivity using a custom component.
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { View, StyleSheet, TouchableWithoutFeedback, Text } from "react-native";
 import { COLORS, FONTS, SIZES } from "../constants/theme";
@@ -26,11 +26,15 @@ import HomeStackNavigator from "./HomeStackNavigator";
 import Home from "../screens/Home";
 import Actions from "../screens/Actions";
 import { useTheme } from "../hooks/useTheme";
+import { useUser } from "../hooks/useUser";
+import { useNotifications } from "../hooks/useNotifications";
+import NotificationSocketManager from "../utils/NotificationSocketManager";
 const Tab = createBottomTabNavigator();
 
 export default function TabNavigator() {
-  const { theme, mode, toggleTheme } = useTheme();
-  const [notificationsLength, setNotificationsLength] = useState(null);
+  const { theme } = useTheme();
+  const { unreadCount } = useNotifications();
+
   const getRoutename = (route) => {
     const routeName = getFocusedRouteNameFromRoute(route);
     if (
@@ -44,8 +48,7 @@ export default function TabNavigator() {
     return "flex";
   };
 
-  useEffect(() => {}, []);
-
+  console.log("unreadCount", unreadCount);
   useEffect(() => {
     requestAnimationFrame(async () => {
       await NavigationBar.setBackgroundColorAsync(theme.background);
@@ -62,6 +65,8 @@ export default function TabNavigator() {
         backgroundColor: theme.background,
       }}>
       <CheckInternet />
+      {/* Notification Socket Manager */}
+      <NotificationSocketManager />
 
       <StatusBar
         backgroundColor={"transparent"}
@@ -135,15 +140,15 @@ export default function TabNavigator() {
                           route.name.toLowerCase() === "createtask"
                             ? SIZES.large * 1.4
                             : focused
-                            ? SIZES.large
-                            : SIZES.large * 0.8
+                              ? SIZES.large
+                              : SIZES.large * 0.8
                         }
                         color={focused ? theme.white : theme.darkGray}
                       />
-                      {notificationsLength > 0 && (
+                      {unreadCount > 0 && (
                         <View style={styles.notificationIconContainer}>
                           <Text style={styles.notificationIconText}>
-                            {notificationsLength}
+                            {unreadCount}
                           </Text>
                         </View>
                       )}
@@ -155,8 +160,8 @@ export default function TabNavigator() {
                         route.name.toLowerCase() === "createtask"
                           ? SIZES.large * 1.4
                           : focused
-                          ? SIZES.large
-                          : SIZES.large * 0.8
+                            ? SIZES.large
+                            : SIZES.large * 0.8
                       }
                       color={focused ? theme.white : theme.darkGray}
                     />

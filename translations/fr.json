@@ -415,6 +415,9 @@
     "searchPlaceholder": "Rechercher des étiquettes...",
     "no_tags": "Aucune étiquette disponible",
     "check_back_tags": "Revenez plus tard pour les tâches, les échéances, l'activité des zones et les étiquettes liées aux machines.",
+    "no_tags_filtered": "Aucune étiquette ne correspond à votre filtre",
+    "reset_filter": "Réinitialisez le filtre pour voir toutes les étiquettes disponibles.",
+
     "filter": {
       "title": "Filtre",
       "close": "Fermer",
@@ -466,8 +469,22 @@
   },
   "cardDetails": {
     "tagDetails": "Détails de Tag",
-    "tagLabel": "Numéro de Tag",
+    "no_description_found": "Aucune description trouvée",
+    "no_action_found": "Aucune action trouvée",
+    "action_details": "Détails de l'action",
+    "action_number": "Action N°",
+    "action_view_details": "Voir les détails",
     "no_iamge_found": "Aucune image capturée",
+    "no_information_found": "Aucune information disponible",
+
+    "action_details_fields": {
+      "tagId": "ID de Tag ",
+      "procedure": "Procédure",
+      "date": "Date",
+      "category": "Catégorie",
+      "service": "Service"
+    },
+    "tagLabel": "Numéro de Tag",
 
     "priority": {
       "label": "Priorité",
@@ -494,7 +511,7 @@
       "zone": "Zone",
       "machine": "Machine",
       "equipment": "Équipement",
-      "responsiblePerson": "Personne responsable",
+      "responsibleDepartment": "Département Responsable",
       "tagNumber": "Numéro de Tag",
       "foundedBy": "Créé par",
       "actions": "Actions",
@@ -516,7 +533,8 @@
     "forgot_password_text": "Si vous devez réinitialiser votre mot de passe, veuillez contacter votre administrateur système à [admin@example.com] ou appeler le [+123 456 7890].\n\nPour des raisons de sécurité, seul l'administrateur est autorisé à gérer les modifications de mot de passe.",
     "email_pattern_error": "Format d'e-mail invalide. Veuillez utiliser une adresse e-mail standard (exemple: name@domain.com).",
     "password_pattern_error": "Le mot de passe doit contenir au moins 8 caractères avec une minuscule, une majuscule, un chiffre et un caractère spécial.",
-    "connection_error": "Erreur de connexion. Veuillez vérifier votre connexion internet et réessayer."
+    "connection_error": "Erreur de connexion. Veuillez vérifier votre connexion internet et réessayer.",
+    "access_denied": "Accès refusé. Seuls les utilisateurs opérationnels sont autorisés à se connecter."
   },
   "noInternet": {
     "noInternet": "Pas de connexion Internet",
@@ -525,6 +543,7 @@
   },
   "home": {
     "hello": "Salut,",
+    "tags_open": "Tags ouvertes",
     "tags_in_progress": "Tags en cours",
     "tags_completed": "Tags terminés",
     "1": {
@@ -595,6 +614,23 @@
     }
   },
   "actions": {
-    "title": "Mes Actions"
+    "title": "Mes Actions",
+    "no_actions_found": "Aucune action trouvée",
+
+    "status": {
+      "all": "Tous",
+      "open": "Ouvert",
+      "in_progress": "En cours",
+      "done": "Terminé"
+    },
+    "actionInfo": {
+      "tag": "TAG",
+      "fps": "FPS",
+      "date": "Date",
+      "status": "Statut",
+      "scan_status": "État du scan",
+      "scanned": "Scanné",
+      "unscanned": "Non scanné"
+    }
   }
 }
