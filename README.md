@@ -9,23 +9,6 @@
   [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 </div>
 
-## 📋 Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Technology Stack](#technology-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [API Integration](#api-integration)
-- [Internationalization](#internationalization)
-- [State Management](#state-management)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## 🎯 Overview
 
 **Aradis** is a comprehensive smart manufacturing operations platform designed to streamline industrial processes through advanced anomaly detection, failure diagnosis, and real-time monitoring. Built with React Native and Expo, this mobile application empowers manufacturing teams to efficiently manage QRAPs (Quick Response Action Plans), track anomalies, and maintain operational excellence.
