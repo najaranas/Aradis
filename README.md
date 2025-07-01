@@ -11,18 +11,11 @@
 
 ## 📱 Screenshots
 
-<div align="center">
-  <img src="assets/images/screenshots/HomeScreen.png" alt="Home Screen" width="250"/>
-  <p><b>Home Screen</b></p>
-  <img src="assets/images/screenshots/TagsOverview.png" alt="Tags Overview" width="250"/>
-  <p><b>Tags Overview</b></p>
-  <img src="assets/images/screenshots/AddTagWorkflow.png" alt="Add Tag Workflow" width="250"/>
-  <p><b>Add Tag Workflow</b></p>
-  <img src="assets/images/screenshots/NotificationsCenter.png" alt="Notifications Center" width="250"/>
-  <p><b>Notifications Center</b></p>
-  <img src="assets/images/screenshots/UserProfile.png" alt="User Profile" width="250"/>
-  <p><b>User Profile</b></p>
-</div>
+- [Home Screen](assets/images/screenshots/HomeScreen.png)
+- [Tags Overview](assets/images/screenshots/TagsOverview.png)
+- [Add Tag Workflow](assets/images/screenshots/AddTagWorkflow.png)
+- [Notifications Center](assets/images/screenshots/NotificationsCenter.png)
+- [User Profile](assets/images/screenshots/UserProfile.png)
 
 
 ## 🎯 Overview
