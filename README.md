@@ -284,7 +284,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Anas Najar**
-- GitHub: [@anasnajar](https://github.com/najaranas)
+- GitHub: [@najaranas](https://github.com/najaranas)
 - Email: [anasnajar.tn@gmail.com]
 
 ## 🙏 Acknowledgments
