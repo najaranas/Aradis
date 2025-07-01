@@ -1,4 +1,4 @@
-# Aradis - Smart Manufacturing Operations Platform
+I'm# Aradis - Smart Manufacturing Operations Platform
 
 <div align="center">
   <img src="assets/icons/miniaradis-logo.png" alt="Aradis Logo" width="200"/>
@@ -284,7 +284,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Anas Najar**
-- GitHub: [@anasnajar](https://github.com/anasnajar)
+- GitHub: [@anasnajar](https://github.com/najaranas)
 - Email: [anasnajar.tn@gmail.com]
 
 ## 🙏 Acknowledgments
