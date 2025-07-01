@@ -9,22 +9,20 @@
   [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 </div>
 
-## 📋 Table of Contents
+## 📱 Screenshots
 
-- [Overview](#overview)
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Technology Stack](#technology-stack)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Usage](#usage)
-- [Project Structure](#project-structure)
-- [API Integration](#api-integration)
-- [Internationalization](#internationalization)
-- [State Management](#state-management)
-- [Contributing](#contributing)
-- [License](#license)
+<div align="center">
+  <img src="assets/images/screenshots/HomeScreen.png" alt="Home Screen" width="250"/>
+  <p><b>Home Screen</b></p>
+  <img src="assets/images/screenshots/TagsOverview.png" alt="Tags Overview" width="250"/>
+  <p><b>Tags Overview</b></p>
+  <img src="assets/images/screenshots/AddTagWorkflow.png" alt="Add Tag Workflow" width="250"/>
+  <p><b>Add Tag Workflow</b></p>
+  <img src="assets/images/screenshots/NotificationsCenter.png" alt="Notifications Center" width="250"/>
+  <p><b>Notifications Center</b></p>
+  <img src="assets/images/screenshots/UserProfile.png" alt="User Profile" width="250"/>
+  <p><b>User Profile</b></p>
+</div>
 
 ## 🎯 Overview
 
@@ -66,9 +64,6 @@
 - **Progress Tracking**: Visual progress indicators for task completion
 - **Historical Data**: Comprehensive reporting and analytics capabilities
 
-## 📱 Screenshots
-
-*[Screenshots will be added here showing the main screens: Home, Scanner, Tags, Actions, Profile]*
 
 ## 🛠 Technology Stack
 
