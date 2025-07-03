@@ -1,4 +1,4 @@
-# Aradis - Smart Manufacturing Operations Platform
+# 🏭 Aradis - Smart Manufacturing Operations Platform
 
 <div align="center">
   <img src="assets/icons/miniaradis-logo.png" alt="Aradis Logo" width="200"/>
