@@ -9,7 +9,7 @@
   [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 </div>
 
-## 📱 Screenshots
+## 📱 Some Screenshots
 
 - [Home Screen](assets/images/screenshots/HomeScreen.png)
 - [Tags Overview](assets/images/screenshots/TagsOverview.png)
