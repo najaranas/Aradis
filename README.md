@@ -145,7 +145,7 @@ Create a `.env` file in the root directory with the following variables:
 
 ```env
 EXPO_PUBLIC_API_BASE_URL=your_api_base_url
-EXPO_PUBLIC_FIREBASE_CONFIG=your_firebase_config
+EXPO_PUBLIC_SOCKET_URL=your_socket_base_url
 ```
 
 ### Firebase Setup
