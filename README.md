@@ -35,14 +35,13 @@
 - **QR Code Scanner**: Scan TAG and FPS QR codes for instant anomaly identification
 - **Tag Management**: Create, track, and manage anomaly report tags with detailed categorization
 - **Action Tracking**: Monitor task progress with real-time status updates
-- **FPS (Failure Problem Solving)**: Comprehensive problem-solving workflow with 5-step process
+- **FPS (Fast Problem Solving)**: Comprehensive problem-solving workflow with 5-step process
 - **Real-time Notifications**: Instant alerts for critical issues and task updates
 
 ### 🎨 User Experience
 - **Multi-language Support**: English, Arabic, and French localization
 - **Dark/Light Theme**: Adaptive theming with automatic system preference detection
 - **Responsive Design**: Optimized for various screen sizes and orientations
-- **Offline Capability**: Basic functionality available without internet connection
 - **Intuitive Navigation**: Tab-based navigation with smooth transitions
 
 ### 🔧 Technical Features
